@@ -208,7 +208,7 @@ public class Timelapse extends AppCompatActivity {
         } else {
             recorder.stop(); //stop recording
             recorder.reset();
-            Log.e("state","recording stopped");
+            Log.e("state","recording has stopped");
             //camera.lock();
             //camera.release();
             frameLayout.setVisibility(View.VISIBLE);
