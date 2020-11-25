@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1D171F"
+    tools:context=".DeviceList">
+
+    <Button
+        android:id="@+id/btnDevices"
+        android:layout_width="352dp"
+        android:layout_height="51dp"
+        android:text="Paired Devices"
+        app:layout_constraintStart_toStartOf="@+id/listDevices"
+        app:layout_constraintTop_toBottomOf="@+id/listDevices" />
+
+    <ListView
+        android:id="@+id/listDevices"
+        android:layout_width="352dp"
+        android:layout_height="550dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="66dp"
+        android:layout_marginEnd="29dp"
+        android:background="#00FFFEFE"
+        android:cacheColorHint="#00FEFEFE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtDevices"
+        android:layout_width="201dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="15dp"
+        android:text="Paired Devices"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/startTimelapse"
+        android:layout_width="268dp"
+        android:layout_height="48dp"
+        android:text="Start Timelapse"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnDevices" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
