@@ -11,10 +11,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.UUID;
+
+import io.github.controlwear.virtual.joystick.android.JoystickView;
 
 public class Control extends AppCompatActivity {
 
@@ -24,9 +27,14 @@ public class Control extends AppCompatActivity {
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
     BluetoothSocket btSocket = null;
+    private JoystickView joystickControl;
     private boolean isBtConnected = false;
     //set UUID
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private TextView mTextViewAngleLeft;
+    private TextView mTextViewStrengthLeft;
+    private TextView mTextViewAngleSelf;
+    private TextView mTextViewStrengthSelf;
 
 
     @Override
@@ -74,6 +82,29 @@ public class Control extends AppCompatActivity {
             public void onClick(View v)
             {
                 Disconnect(); //close connection
+            }
+        });
+
+        mTextViewAngleLeft = (TextView) findViewById(R.id.textView_angle_left);
+        mTextViewStrengthLeft = (TextView) findViewById(R.id.textView_strength_left);
+
+        mTextViewAngleSelf = (TextView) findViewById(R.id.textView_angle_self);
+        mTextViewStrengthSelf = (TextView) findViewById(R.id.textView_strength_self);
+
+        /*JoystickView joystickLeft = (JoystickView) findViewById(R.id.joystickView_left);
+        joystickLeft.setOnMoveListener(new JoystickView.OnMoveListener() {
+            @Override
+            public void onMove(int angle, int strength) {
+                mTextViewAngleLeft.setText(angle + "°");
+                mTextViewStrengthLeft.setText(strength + "%");
+            }
+        });*/
+        joystickControl = (JoystickView) findViewById(R.id.joystickSelf);
+        joystickControl.setOnMoveListener(new JoystickView.OnMoveListener() {
+            @Override
+            public void onMove(int angle, int strength) {
+                mTextViewAngleSelf.setText(angle + "°");
+                mTextViewStrengthSelf.setText(strength + "%");
             }
         });
 

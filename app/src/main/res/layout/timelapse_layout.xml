@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/timelapse"
+        app:layout_constraintBottom_toTopOf="@+id/textViewY"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -53,9 +53,8 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/timelapse"
-        app:layout_constraintEnd_toStartOf="@+id/textViewZ"
-        app:layout_constraintStart_toEndOf="@+id/textViewX" />
+        app:layout_constraintBottom_toTopOf="@+id/textViewZ"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textViewZ"
@@ -64,6 +63,29 @@
         android:background="#FFFFFF"
         android:text="TextView"
         app:layout_constraintBottom_toTopOf="@+id/timelapse"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <view
+        android:id="@+id/joystickCamera"
+        class="io.github.controlwear.virtual.joystick.android.JoystickView"
+        android:layout_width="144dp"
+        android:layout_height="145dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:hapticFeedbackEnabled="false"
+        app:JV_backgroundColor="#2EE51F1F"
+        app:JV_borderColor="#22E51F1F"
+        app:JV_borderWidth="1sp"
+        app:JV_buttonColor="#D9F83C3C"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <view
+        android:id="@+id/CustomView"
+        class="com.example.bt_firsttry.views.CustomView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,7 +21,7 @@
         android:id="@+id/btnOff"
         android:layout_width="157sp"
         android:layout_height="79sp"
-        android:layout_marginTop="83dp"
+        android:layout_marginTop="48dp"
         android:text="OFF"
         app:layout_constraintStart_toStartOf="@+id/btnOn"
         app:layout_constraintTop_toBottomOf="@+id/btnOn" />
@@ -30,7 +30,7 @@
         android:id="@+id/btnDscn"
         android:layout_width="157sp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="111dp"
+        android:layout_marginTop="192dp"
         android:text="Disconnect"
         app:layout_constraintStart_toStartOf="@+id/btnOn"
         app:layout_constraintTop_toBottomOf="@+id/btnOff" />
@@ -46,4 +46,56 @@
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_angle_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="197dp"
+        android:text="TextView"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="@+id/textView_angle_self"
+        app:layout_constraintTop_toBottomOf="@+id/textView_strength_self" />
+
+    <TextView
+        android:id="@+id/textView_strength_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:text="TextView"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="@+id/textView_angle_self"
+        app:layout_constraintTop_toBottomOf="@+id/textView_angle_left" />
+
+    <TextView
+        android:id="@+id/textView_angle_self"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="398dp"
+        android:layout_marginEnd="24dp"
+        android:text="TextView"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_strength_self"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:text="TextView"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="@+id/textView_angle_self"
+        app:layout_constraintTop_toBottomOf="@+id/textView_angle_self" />
+
+    <view
+        android:id="@+id/joystickSelf"
+        class="io.github.controlwear.virtual.joystick.android.JoystickView"
+        android:layout_width="118dp"
+        android:layout_height="94dp"
+        android:layout_marginTop="47dp"
+        android:layout_marginEnd="78dp"
+        app:layout_constraintEnd_toStartOf="@+id/textView_strength_self"
+        app:layout_constraintTop_toBottomOf="@+id/btnOff" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

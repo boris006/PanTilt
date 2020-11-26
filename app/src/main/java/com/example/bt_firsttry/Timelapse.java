@@ -22,12 +22,17 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.bt_firsttry.views.CustomView;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import io.github.controlwear.virtual.joystick.android.JoystickView;
+
 //TODO camera focus
+//TODO preview mit buttons [xdir][###][ydir][###]
 public class Timelapse extends AppCompatActivity {
     Camera camera;
     FrameLayout frameLayout; //for camera preview
@@ -35,6 +40,8 @@ public class Timelapse extends AppCompatActivity {
     SurfaceHolder mHolder; //holder for surfaceView
     ShowCamera showCamera; //Class for camera preview on framelayout
     MediaRecorder recorder;
+    CustomView crossView;
+    JoystickView joystickTime;
     float[] orientations = new float[3]; //orientation 1 tilt sensor
     int i = 0;
     Boolean recording = Boolean.FALSE;
@@ -63,6 +70,15 @@ public class Timelapse extends AppCompatActivity {
         Log.e("state","on create");
         //MediaRecorder recorder = new MediaRecorder();*/
 
+        crossView = (CustomView) findViewById(R.id.CustomView);
+        joystickTime = (JoystickView) findViewById(R.id.joystickCamera);
+        joystickTime.setOnMoveListener(new JoystickView.OnMoveListener() {
+            @Override
+            public void onMove(int angle, int strength) {
+
+                crossView.adjustCross(joystickTime.getNormalizedX(),joystickTime.getNormalizedY());
+            }
+        });
 
     }
     @Override
