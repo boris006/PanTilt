@@ -207,7 +207,7 @@ public class Timelapse extends AppCompatActivity {
 
 
             recorder.setOutputFile(fileName);
-            recorder.setCaptureRate(1);
+            recorder.setCaptureRate(24);
             //recorder.setMaxDuration(5 * 1000);
             //recorder.setVideoSize(1920,1080);
             //recorder.setPreviewDisplay(mHolder.getSurface());
