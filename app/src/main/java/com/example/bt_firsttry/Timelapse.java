@@ -82,6 +82,17 @@ public class Timelapse extends AppCompatActivity {
             camera.release();
             camera = null;
         }
+        //stop recording
+        recorder.stop(); //stop recording
+        recorder.reset();
+        Log.e("state","recording has been stopped4");
+        //camera.lock();
+        //camera.release();
+        //frameLayout.setVisibility(View.VISIBLE);
+        //showCamera.startShowing();
+
+        recording = Boolean.FALSE; //Change Text of Button
+        buttonHandler();
     }
 
 //    Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
@@ -165,6 +176,7 @@ public class Timelapse extends AppCompatActivity {
     }
 
     public void startTimelapse(View v) throws IOException {
+        //
         if (recording == Boolean.FALSE) { //not recording yet but starting
             //MediaRecorder recorder = new MediaRecorder();
             showCamera.stopShowing();   //Turn Off Camera Preview
@@ -174,7 +186,6 @@ public class Timelapse extends AppCompatActivity {
             String fileName = getOutputVideoFilePath(); //Video file path with name
             if (recorder == null)
                 recorder = new MediaRecorder();
-
             if (mSurfaceView.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) { //set orientation of preview and recorded video
                 params.set("orientation", "landscape");
                 camera.setDisplayOrientation(0);
