@@ -53,15 +53,35 @@ public class Timelapse extends AppCompatActivity {
         //mHolder.addCallback(this);
         //mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         //open camera
-        camera = Camera.open();
+        /*camera = Camera.open();
         showCamera = new ShowCamera(this, camera);
         frameLayout.addView(showCamera);
         frameLayout.setVisibility(View.VISIBLE);
         //showCamera.startShowing();
         Log.e("state","screen started");
-        //MediaRecorder recorder = new MediaRecorder();
+        //MediaRecorder recorder = new MediaRecorder();*/
 
 
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(camera == null) {
+            camera = Camera.open();
+            showCamera = new ShowCamera(this, camera);
+            frameLayout.addView(showCamera);
+            frameLayout.setVisibility(View.VISIBLE);
+            //showCamera.startShowing();
+            Log.e("state", "screen started");
+        }
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        if(camera != null){
+            camera.release();
+            camera = null;
+        }
     }
 
 //    Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
