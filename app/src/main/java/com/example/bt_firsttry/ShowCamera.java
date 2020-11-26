@@ -13,13 +13,13 @@ import java.io.IOException;
 import java.util.List;
 
 public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
-    Camera camera;
+    Camera cameraSur;
     SurfaceHolder holder;
 
 
-    public ShowCamera(Context context, Camera camera) {
+    public ShowCamera(Context context, Camera cameraSur) {
         super(context);
-        this.camera = camera;
+        this.cameraSur = cameraSur;
         holder = getHolder();
         holder.addCallback(this);
 
@@ -33,29 +33,33 @@ public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
+        Log.e("state", " surface created");
         setParameters();
         startShowing();
+
     }
+
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-        this.camera.stopPreview();
-        camera.release();
+        this.cameraSur.stopPreview();
+        cameraSur.release();
+        Log.e("state", " surface destroyed");
     }
 
     public void startShowing(){
         try{
-            camera.setPreviewDisplay(holder);
-            camera.startPreview();
+            cameraSur.setPreviewDisplay(holder);
+            cameraSur.startPreview();
             //camera.unlock();
         }catch(IOException e ){
             e.printStackTrace();
         }
     }
     public void stopShowing(){
-        camera.stopPreview();
+        cameraSur.stopPreview();
     }
     public void setParameters(){
-        Camera.Parameters params = camera.getParameters();
+        Camera.Parameters params = cameraSur.getParameters();
         List<Camera.Size> sizes = params.getSupportedPictureSizes();
         Camera.Size mSize = null;
         int maxwidth = 0;
@@ -78,18 +82,18 @@ public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
 
         if(this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE){
             params.set("orientation","portrait");
-            camera.setDisplayOrientation(90);
+            cameraSur.setDisplayOrientation(90);
             params.setRotation(90);
         }else{
             params.set("orientation","landscape");
-            camera.setDisplayOrientation(0);
+            cameraSur.setDisplayOrientation(0);
             params.setRotation(180);
         }
 
         params.setPictureSize(mSize.width,mSize.height);
 
 
-        camera.setParameters(params);
+        cameraSur.setParameters(params);
 //        try{
 //            camera.setPreviewDisplay(holder);
 //            camera.startPreview();

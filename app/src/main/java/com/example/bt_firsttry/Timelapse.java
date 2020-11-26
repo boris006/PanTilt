@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
+//TODO camera focus
 public class Timelapse extends AppCompatActivity {
     Camera camera;
     FrameLayout frameLayout; //for camera preview
@@ -49,16 +49,18 @@ public class Timelapse extends AppCompatActivity {
 
         mHolder = mSurfaceView.getHolder();
         frameLayout = (FrameLayout) findViewById(R.id.framelayout);
+        if (recorder == null)
+            recorder = new MediaRecorder();
         //mHolder.addCallback((SurfaceHolder.Callback) this);
         //mHolder.addCallback(this);
         //mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         //open camera
-        /*camera = Camera.open();
+        camera = Camera.open();
         showCamera = new ShowCamera(this, camera);
         frameLayout.addView(showCamera);
         frameLayout.setVisibility(View.VISIBLE);
         //showCamera.startShowing();
-        Log.e("state","screen started");
+        Log.e("state","on create");
         //MediaRecorder recorder = new MediaRecorder();*/
 
 
@@ -66,33 +68,36 @@ public class Timelapse extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
+        Log.e("state", " on resume ");
         if(camera == null) {
+            Log.e("state", " on resume camera null ");
             camera = Camera.open();
             showCamera = new ShowCamera(this, camera);
             frameLayout.addView(showCamera);
             frameLayout.setVisibility(View.VISIBLE);
             //showCamera.startShowing();
-            Log.e("state", "screen started");
+
         }
+
     }
     @Override
     protected void onPause(){
         super.onPause();
-        if(camera != null){
-            camera.release();
-            camera = null;
-        }
-        //stop recording
-        recorder.stop(); //stop recording
-        recorder.reset();
-        Log.e("state","recording has been stopped4");
-        //camera.lock();
-        //camera.release();
-        //frameLayout.setVisibility(View.VISIBLE);
-        //showCamera.startShowing();
 
-        recording = Boolean.FALSE; //Change Text of Button
-        buttonHandler();
+        if(recording = Boolean.TRUE){
+
+            recording = Boolean.FALSE; //Change Text of Button
+            buttonHandler();
+            recorder.reset();
+        }
+
+
+        if(camera != null){
+            //camera.release();
+            camera = null;
+            Log.e("state", " onpause camera released");
+        }
+
     }
 
 //    Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
@@ -184,8 +189,8 @@ public class Timelapse extends AppCompatActivity {
             Log.e("state","trying started1");
             Camera.Parameters params = camera.getParameters();
             String fileName = getOutputVideoFilePath(); //Video file path with name
-            if (recorder == null)
-                recorder = new MediaRecorder();
+            //if (recorder == null)
+             //   recorder = new MediaRecorder();
             if (mSurfaceView.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) { //set orientation of preview and recorded video
                 params.set("orientation", "landscape");
                 camera.setDisplayOrientation(0);
