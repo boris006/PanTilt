@@ -53,7 +53,7 @@ public class Control extends AppCompatActivity {
         Discnt = (Button)findViewById(R.id.btnDscn);
 
         //call function to connect bluetooth
-        new ConnectBT().execute();
+        //new ConnectBT().execute();
 
         //clicklistener for buttons to send data to HC module
         On.setOnClickListener(new View.OnClickListener()
@@ -184,7 +184,7 @@ public class Control extends AppCompatActivity {
             try
             {
                 //connect if socket is not used or connection flag is not set
-                if(/*btSocket == null ||*/ !isBtConnected)
+                if(/*btSocket == null || */!isBtConnected)
                 {
                     //get device bluetooth adapter
                     myBluetooth = BluetoothAdapter.getDefaultAdapter();

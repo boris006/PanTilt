@@ -1,5 +1,10 @@
 package com.example.bt_firsttry;
 
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -10,6 +15,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -19,6 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -28,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
@@ -41,10 +49,17 @@ public class Timelapse extends AppCompatActivity {
     ShowCamera showCamera; //Class for camera preview on framelayout
     MediaRecorder recorder;
     CustomView crossView;
+    String address = null;
     JoystickView joystickTime;
+    private ProgressDialog progress;
+    BluetoothAdapter myBluetooth = null;
+    BluetoothSocket btSocket = null;
+    private boolean isBtConnected = false;
     float[] orientations = new float[3]; //orientation 1 tilt sensor
     int i = 0;
     Boolean recording = Boolean.FALSE;
+    //set UUID
+    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +68,6 @@ public class Timelapse extends AppCompatActivity {
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         useSensor();
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
-
         mHolder = mSurfaceView.getHolder();
         frameLayout = (FrameLayout) findViewById(R.id.framelayout);
         if (recorder == null)
@@ -67,16 +81,26 @@ public class Timelapse extends AppCompatActivity {
         frameLayout.addView(showCamera);
         frameLayout.setVisibility(View.VISIBLE);
         //showCamera.startShowing();
-        Log.e("state","on create");
+
         //MediaRecorder recorder = new MediaRecorder();*/
+        Log.e("state","on create before bt");
+        //Bluetooth
+        Intent newInt = getIntent();
+        address = newInt.getStringExtra(DeviceList.EXTRA_ADDRESS);
+        Log.e("state","on create after intent bt");
+        new ConnectBTTime().execute();
+
 
         crossView = (CustomView) findViewById(R.id.CustomView);
         joystickTime = (JoystickView) findViewById(R.id.joystickCamera);
+        Log.e("state","on create before joystick");
         joystickTime.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
 
                 crossView.adjustCross(joystickTime.getNormalizedX(),joystickTime.getNormalizedY());
+                sendPosition();
+
             }
         });
 
@@ -97,75 +121,28 @@ public class Timelapse extends AppCompatActivity {
 
     }
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
 
-        if(recording = Boolean.TRUE){
+        if (recording = Boolean.TRUE) {
 
             recording = Boolean.FALSE; //Change Text of Button
             buttonHandler();
             recorder.reset();
         }
 
-
-        if(camera != null){
+        if (camera != null) {
             //camera.release();
             camera = null;
             Log.e("state", " onpause camera released");
         }
+        if ((progress != null) && progress.isShowing())
+            progress.dismiss();
+        progress = null;
+
 
     }
 
-//    Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
-//        @Override
-//        public void onPictureTaken(byte[] data, Camera camera) {
-//            File picture_File = getOutputMediafile();
-//
-//            try {
-//                FileOutputStream fos = new FileOutputStream(picture_File);
-//                fos.write(data);
-//                fos.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            camera.startPreview();
-//           /* if(picture_File == null){
-//                return;
-//            }else{
-//                try{
-//                    FileOutputStream fos = new FileOutputStream(picture_File);
-//                    fos.write(data);
-//                    fos.close();
-//                    camera.startPreview();
-//                }catch(IOException e){
-//                    e.printStackTrace();
-//                }
-//
-//            }*/
-//        }
-//    };
-
-    private File getOutputMediafile() {
-        String state = Environment.getExternalStorageState();
-        //File folder_gui = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "temp");
-        //folder_gui.mkdirs();
-        String formatted_date = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss").format(new Date(System.currentTimeMillis()));
-        Log.i("state", formatted_date);
-        File outputFile = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "temp", "IMG" + formatted_date + ".jpeg");
-        return outputFile;
-      /*if(!state.equals(Environment.MEDIA_MOUNTED)){
-          return null;
-      }else{
-          File folder_gui = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "temp");
-
-          if(!folder_gui.exists()){
-              folder_gui.mkdir();
-          }
-
-          File outputFile = new File(folder_gui,"temp.jpg");
-          return outputFile;
-      }*/
-    }
 
     private String getOutputVideoFilePath() {
         // Create a media file name
@@ -179,11 +156,6 @@ public class Timelapse extends AppCompatActivity {
         return mediaFile;
     }
 
-//    public void captureImage(View v){
-//        if(camera!= null){
-//            camera.takePicture(null,null,mPictureCallback);
-//        }
-//    }
 
     public void buttonHandler() {
         Button timelapse = (Button) findViewById(R.id.timelapse);
@@ -310,4 +282,111 @@ public class Timelapse extends AppCompatActivity {
         sensorManager.registerListener(rotListener,rotSensor,SensorManager.SENSOR_DELAY_UI);
     }
 
+    //UI thread
+    private class ConnectBTTime extends AsyncTask<Void, Void, Void>
+    {
+        //high probability connection was successful
+        private boolean ConnectSuccess = true;
+
+        @Override
+        protected void onPreExecute()
+        {
+            //show progressDialog on screen
+            progress = ProgressDialog.show(Timelapse.this, "Connecting...",
+                    "Please wait!",true);
+        }
+        @Override
+        protected Void doInBackground(Void... devices)
+        {
+            try
+            {
+                //connect if socket is not used or connection flag is not set
+                if(/*btSocket == null ||*/ !isBtConnected)
+                {   Log.e("state", " bt if");;
+                    //get device bluetooth adapter
+                    myBluetooth = BluetoothAdapter.getDefaultAdapter();
+                    //connects to address given from deviceList intent
+                    BluetoothDevice btDevice = myBluetooth.getRemoteDevice(address);
+                    //create a RfComm connection
+                    btSocket = btDevice.createInsecureRfcommSocketToServiceRecord(myUUID);
+                    //end discovering bt modules
+                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+                    //start connection over socket
+                    btSocket.connect();
+                }
+            }
+            catch (IOException e)
+            {
+                //if an error occurs the flag will be set to 0
+                ConnectSuccess = false;
+                Log.e("state", " bt failure");
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            super.onPostExecute(result);
+            if(!ConnectSuccess)
+            {
+                msg("Connection Failed. Pls try again.");
+                finish();
+            }
+            else
+            {
+                msg("Connected");
+                isBtConnected = true;
+            }
+            if ((progress != null) && progress.isShowing()) {
+                progress.dismiss();
+            }
+        }
+    }
+
+    // fast way to call Toast
+    private void msg(String s)
+    {
+        Toast.makeText(Timelapse.this,s,Toast.LENGTH_LONG).show();
+    }
+
+    private void sendPosition(){
+        int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0;
+        String xDir = "0", yDir = "0";
+        xJoy = joystickTime.getNormalizedX();
+        yJoy = joystickTime.getNormalizedY();
+        if(xJoy < 50){
+            xSteps = 50 - xJoy;
+            //left
+            xDir = "0";
+        }
+        if(yJoy < 50){
+            ySteps = 50 - yJoy;
+            yDir = "0";
+        }
+        if(xJoy > 50){
+            xSteps = xJoy - 50;
+            //left
+            xDir = "1";
+        }
+        if(yJoy > 50){
+            ySteps = yJoy - 50;
+            yDir = "1";
+        }
+
+        String msgXY =  String.format("%s%03d%s%03d",xDir,xSteps,yDir,ySteps);
+        msg(msgXY);
+
+        if (btSocket!=null)
+        {
+            try
+            {
+
+                btSocket.getOutputStream().write("0".toString().getBytes());
+            }
+            catch (IOException e)
+            {
+                msg("Error");
+            }
+        }
+    }
 }
