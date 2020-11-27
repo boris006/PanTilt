@@ -290,7 +290,7 @@ public class Timelapse extends AppCompatActivity {
                 if (Math.round(orientations[1])==0){
                     textY.setBackgroundColor(Color.GREEN);
                 }else{
-                    textY.setBackgroundColor(Color.WHITE);
+                    textY.setBackgroundColor(0xFF1D171F);
                 }
                 //textZ.setText("Z: " + Math.round(orientations[2]));
             }
