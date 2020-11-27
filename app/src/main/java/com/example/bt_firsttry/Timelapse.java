@@ -65,7 +65,6 @@ public class Timelapse extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timelapse_layout);
-        //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         useSensor();
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
         mHolder = mSurfaceView.getHolder();
@@ -330,7 +329,7 @@ public class Timelapse extends AppCompatActivity {
             if(!ConnectSuccess)
             {
                 msg("Connection Failed. Pls try again.");
-                finish();
+                //finish();
             }
             else
             {
@@ -375,7 +374,8 @@ public class Timelapse extends AppCompatActivity {
         }
 
         String msgXY =  String.format("%s%03d%s%03d",xDir,xSteps,yDir,ySteps);
-        msg(msgXY);
+        //msg(msgXY);
+        Log.e("Output string", msgXY);
 
         if (btSocket!=null)
         {

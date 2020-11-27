@@ -18,23 +18,19 @@
 
     <SurfaceView
         android:id="@+id/surfaceView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="732dp"
+        android:layout_height="366dp"
         android:keepScreenOn="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.489"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/timelapse"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <FrameLayout
         android:id="@+id/framelayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="732dp"
+        android:layout_height="366dp"
         android:keepScreenOn="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="@+id/surfaceView"
+        app:layout_constraintTop_toTopOf="@+id/surfaceView">
 
     </FrameLayout>
 
@@ -83,8 +79,8 @@
     <view
         android:id="@+id/CustomView"
         class="com.example.bt_firsttry.views.CustomView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="731dp"
+        android:layout_height="412dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

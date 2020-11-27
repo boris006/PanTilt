@@ -65,7 +65,6 @@ public class CustomView extends View {
 
         lPaint.setColor(Color.RED);
         lPaint.setStrokeWidth(5);
-        canvas.drawColor(Color.argb(18,232,31,31));
         canvas.drawLine(XCross - 50, YCross, XCross + 50, YCross,lPaint);
         canvas.drawLine(XCross, YCross - 50, XCross, YCross + 50,lPaint);
     }
