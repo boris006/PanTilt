@@ -19,7 +19,8 @@
         <activity android:name=".Control"></activity>
         <activity android:name=".DeviceList" />
         <activity android:name=".Timelapse"
-                  android:screenOrientation="landscape"/>
+                  android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

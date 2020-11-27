@@ -18,19 +18,21 @@
 
     <SurfaceView
         android:id="@+id/surfaceView"
-        android:layout_width="732dp"
-        android:layout_height="366dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:keepScreenOn="true"
-        app:layout_constraintBottom_toTopOf="@+id/timelapse"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/CustomView" />
 
     <FrameLayout
         android:id="@+id/framelayout"
-        android:layout_width="732dp"
-        android:layout_height="366dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:keepScreenOn="true"
-        app:layout_constraintEnd_toEndOf="@+id/surfaceView"
-        app:layout_constraintTop_toTopOf="@+id/surfaceView">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
 
