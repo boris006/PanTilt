@@ -91,7 +91,10 @@ public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         params.setPictureSize(mSize.width,mSize.height);
-
+        if (params.getSupportedFocusModes().contains(
+                Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        }
 
         cameraSur.setParameters(params);
 //        try{

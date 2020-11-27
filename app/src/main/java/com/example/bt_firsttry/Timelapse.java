@@ -206,6 +206,10 @@ public class Timelapse extends AppCompatActivity {
                 camera.setDisplayOrientation(90);
                 params.setRotation(270);
             }
+            if (params.getSupportedFocusModes().contains(
+                    Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+                params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            }
             camera.setParameters(params); //apply changed parameters to camera object
             camera.unlock();
             //recorder.getSurface(camera);
