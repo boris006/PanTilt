@@ -4,14 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#1D171F"
     tools:context=".Timelapse">
 
     <Button
         android:id="@+id/timelapse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#1D171F"
         android:onClick="startTimelapse"
         android:text="Timelapse Starten"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -40,8 +43,9 @@
         android:id="@+id/textViewX"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="#1D171F"
         android:text="TextView"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/textViewY"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -49,8 +53,9 @@
         android:id="@+id/textViewY"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="#1D171F"
         android:text="TextView"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/textViewZ"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -58,8 +63,9 @@
         android:id="@+id/textViewZ"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="#1D171F"
         android:text="TextView"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/timelapse"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -83,6 +89,7 @@
         class="com.example.bt_firsttry.views.CustomView"
         android:layout_width="731dp"
         android:layout_height="412dp"
+        android:background="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
