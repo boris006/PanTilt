@@ -66,6 +66,9 @@ public class Timelapse extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timelapse_layout);
         useSensor();
+        hideNavBar();
+
+
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
         mHolder = mSurfaceView.getHolder();
         frameLayout = (FrameLayout) findViewById(R.id.framelayout);
@@ -269,7 +272,7 @@ public class Timelapse extends AppCompatActivity {
                 }else{
                     textY.setBackgroundColor(Color.WHITE);
                 }
-                textZ.setText("Z: " + Math.round(orientations[2]));
+                //textZ.setText("Z: " + Math.round(orientations[2]));
             }
 
 
@@ -350,6 +353,7 @@ public class Timelapse extends AppCompatActivity {
     }
 
     private void sendPosition(){
+        TextView textZ = (TextView) findViewById(R.id.textViewZ);
         int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0;
         String xDir = "0", yDir = "0";
         xJoy = joystickTime.getNormalizedX();
@@ -376,18 +380,22 @@ public class Timelapse extends AppCompatActivity {
         String msgXY =  String.format("%s%03d%s%03d",xDir,xSteps,yDir,ySteps);
         //msg(msgXY);
         Log.e("Output string", msgXY);
+        textZ.setText(msgXY);
+//        if (btSocket!=null)
+//        {
+//            try
+//            {
+//
+//                btSocket.getOutputStream().write("0".toString().getBytes());
+//            }
+//            catch (IOException e)
+//            {
+//                msg("Error");
+//            }
+//        }
+    }
+    public void hideNavBar(){
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
-        if (btSocket!=null)
-        {
-            try
-            {
-
-                btSocket.getOutputStream().write("0".toString().getBytes());
-            }
-            catch (IOException e)
-            {
-                msg("Error");
-            }
-        }
     }
 }
