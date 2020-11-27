@@ -65,7 +65,7 @@ public class Timelapse extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timelapse_layout);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         useSensor();
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
         mHolder = mSurfaceView.getHolder();
@@ -337,6 +337,7 @@ public class Timelapse extends AppCompatActivity {
                 msg("Connected");
                 isBtConnected = true;
             }
+
             if ((progress != null) && progress.isShowing()) {
                 progress.dismiss();
             }
