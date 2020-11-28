@@ -106,7 +106,7 @@ public class Timelapse extends AppCompatActivity {
                 sendPosition();
 
             }
-        });
+        },100); //TODO send interval in ms
 
     }
     @Override
