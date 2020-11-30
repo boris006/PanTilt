@@ -175,7 +175,12 @@ public class Timelapse extends AppCompatActivity {
             {
                 if (allPointsSet){
                     //TODO Hier abfragen ob Smartphone in die Halterung gesetzt wurde
-                    movePoints();
+                    //moves to point A without checking the error
+                    try {
+                        moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
                 }else{
                     msg("Fehler: Punkte A & B müssen gesetzt werden!");
@@ -379,7 +384,13 @@ public class Timelapse extends AppCompatActivity {
 
                     if (updatedSensors){
                         //continueMoving = false;
-                        movePoints();
+                        try {
+                            Thread.sleep(1500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Log.e("state","try to move to Point again");
+                        //movePoints();
                     }else{
                         updatedSensors = true;
                     }
@@ -397,7 +408,7 @@ public class Timelapse extends AppCompatActivity {
 
             }
         };
-        sensorManager.registerListener(rotListener,rotSensor,SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener(rotListener,rotSensor,SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     //UI thread
@@ -507,6 +518,11 @@ public class Timelapse extends AppCompatActivity {
 
                 btSocket.getOutputStream().write(s.getBytes());
                 Log.e("bluetooth string", s);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 stringsent = true;
             }
             catch (IOException e)
@@ -517,8 +533,9 @@ public class Timelapse extends AppCompatActivity {
     }
 
     public void moveToPoint(Point p, int speed,int current_x_angle, int current_y_angle) throws InterruptedException {
-        int delta_x = 0, delta_y = 0, x_ratio = 34, y_ratio = 111, xSteps = 0, ySteps = 0, xOutPutSteps= 0, yOutPutSteps=0; //34 and 111 steps per degree
+        int delta_x = 0, delta_y = 0 , y_ratio = 111, xSteps = 0, ySteps = 0, xOutPutSteps= 0, yOutPutSteps=0; //34 and 111 steps per degree
         String xDir = "0", yDir = "0";
+        float x_ratio = (float) 33.77;
         //int current_x_angle = Math.round(orientations[0]); //current orientations
         //int current_y_angle = Math.round(orientations[1]);
 
@@ -527,7 +544,7 @@ public class Timelapse extends AppCompatActivity {
         delta_y = p.y_angle - current_y_angle;
         Log.e("state","MoveToPoint delta x: " + delta_x + " delta y: " + delta_y);
         //convert from angle to steps
-        xSteps = Math.abs(delta_x * x_ratio);
+        xSteps = Math.abs(Math.round(delta_x * x_ratio));
         ySteps = Math.abs(delta_y * y_ratio);
 
         //get directions
@@ -544,8 +561,9 @@ public class Timelapse extends AppCompatActivity {
 
 
         //to fit our protocol (max 999 steps)
-        if((xSteps > 999)||(ySteps > 999)){
+        while(((xSteps > 999)||(ySteps > 999))&&stringsent){
             //overflow in x or y
+            //TODO sensor event doesnt get updated (bad)
             if (xSteps > 999){
                 xOutPutSteps = 999;
                 xSteps = xSteps - 999;
@@ -554,46 +572,22 @@ public class Timelapse extends AppCompatActivity {
                 yOutPutSteps = 999;
                 ySteps = ySteps - 999;
             }
-            continueMoving = true;
-        }else{
+            String msgXY =  String.format("%s%03d%s%03d",xDir,xOutPutSteps,yDir,yOutPutSteps);
+            stringsent = false;
+            BluetoothSendString(msgXY);
+
+            }
             //normal
+
+            //TODO sensor event gets updated (good)
             yOutPutSteps = ySteps;
             xOutPutSteps = xSteps;
-            continueMoving = false;
-        }
-
-
-        //send Over Bluetooth
-        String msgXY =  String.format("%s%03d%s%03d",xDir,xOutPutSteps,yDir,yOutPutSteps);
-        //msg("Try to Send Move from MoveToPoint < 999");
-        stringsent = false;
-        BluetoothSendString(msgXY);
-        useSensor();
+            String msgXY =  String.format("%s%03d%s%03d",xDir,xOutPutSteps,yDir,yOutPutSteps);
+            stringsent = false;
+            BluetoothSendString(msgXY);
 
 
 
     }
 
-
-    public void movePoints(){ //function called by onclick
-            updatedSensors = false;
-            if(pointA.x_angle != orientations[0]){
-                if (stringsent){
-                    try {
-                    moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
-                    Thread.sleep(1000);
-                    }catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    //useSensor();
-
-                //TODO update orientations
-            }
-            //Thread.sleep(10);
-            //moveToPoint(pointA, 100);
-            //msg("didnt compensate error");
-
-            //msg("Move To Point wird ausgeführt");
-        }
-    }
 }
