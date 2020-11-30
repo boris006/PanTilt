@@ -93,4 +93,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/setPoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Punkt A Setzen"
+        app:layout_constraintBottom_toTopOf="@+id/textViewX"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/moveToA"
+        android:layout_width="136dp"
+        android:layout_height="50dp"
+        android:text="Bewege zu A"
+        app:layout_constraintBottom_toTopOf="@+id/setPoint"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

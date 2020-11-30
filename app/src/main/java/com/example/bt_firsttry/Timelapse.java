@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -49,6 +50,7 @@ public class Timelapse extends AppCompatActivity {
     ShowCamera showCamera; //Class for camera preview on framelayout
     MediaRecorder recorder;
     CustomView crossView;
+
     String address = null;
     JoystickView joystickTime;
     private ProgressDialog progress;
@@ -61,13 +63,41 @@ public class Timelapse extends AppCompatActivity {
     //set UUID
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+
+    //Automatic Mode Point Initialisation
+    Boolean allPointsSet = false, continueMoving = false;
+    Button setPoint, moveToA;
+    Point pointA, pointB;
+
+    class Point{
+        int x_angle;
+        int y_angle;
+        boolean isSet;
+
+        public Point(){
+            x_angle = 0;
+            y_angle = 0;
+            isSet = false;
+         }
+         public void setFromOrientation(){
+             x_angle = Math.round(orientations[0]);
+             y_angle = Math.round(orientations[1]);
+             isSet = true;
+         }
+         public void reset(){
+             x_angle = 0;
+             y_angle = 0;
+             isSet = false;
+         }
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timelapse_layout);
         useSensor();
-        hideNavBar();
-
         //hide nav bar
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
@@ -76,9 +106,7 @@ public class Timelapse extends AppCompatActivity {
         frameLayout = (FrameLayout) findViewById(R.id.framelayout);
         if (recorder == null)
             recorder = new MediaRecorder();
-        //mHolder.addCallback((SurfaceHolder.Callback) this);
-        //mHolder.addCallback(this);
-        //mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
         //open camera
         camera = Camera.open();
         showCamera = new ShowCamera(this, camera);
@@ -88,13 +116,14 @@ public class Timelapse extends AppCompatActivity {
 
         //MediaRecorder recorder = new MediaRecorder();*/
         Log.e("state","on create before bt");
+
         //Bluetooth
         Intent newInt = getIntent();
         address = newInt.getStringExtra(DeviceList.EXTRA_ADDRESS);
         Log.e("state","on create after intent bt");
         new ConnectBTTime().execute();
 
-
+        //create Joystick
         crossView = (CustomView) findViewById(R.id.CustomView);
         joystickTime = (JoystickView) findViewById(R.id.joystickCamera);
         Log.e("state","on create before joystick");
@@ -107,6 +136,57 @@ public class Timelapse extends AppCompatActivity {
 
             }
         },100); //TODO send interval in ms
+
+
+        //Automatic Mode Point Initialisation
+        pointA = new Point();
+        pointB = new Point();
+        //set Points A and B
+        setPoint = (Button)findViewById(R.id.setPoint);
+        setPoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                //has a been initialised?
+                if (pointA.isSet == false){
+                    pointA.setFromOrientation();
+                    setPoint.setText("Punkt B setzen");
+                }else{
+                    if (pointB.isSet == false){
+                        pointB.setFromOrientation();
+                        setPoint.setText("A & B gesetzt");
+                        allPointsSet = true;
+                    }else{
+                        pointA.reset();
+                        pointB.reset();
+                        setPoint.setText("Punkt A setzen");
+                        allPointsSet = false;
+                    }
+
+                }
+
+            }
+        });
+        //Move To Point A to Initialize
+        moveToA = (Button)findViewById(R.id.moveToA);
+        moveToA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if (allPointsSet){
+                    //TODO Hier abfragen ob Smartphone in die Halterung gesetzt wurde
+                    try {
+                        moveToPoint(pointA,100);
+                        //msg("Move To Point wird ausgeführt");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    msg("Fehler: Punkte A & B müssen gesetzt werden!");
+                }
+            }
+        });
+
 
     }
     @Override
@@ -267,7 +347,7 @@ public class Timelapse extends AppCompatActivity {
 
     }
 
-    public void useSensor(){
+    private void useSensor(){
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor rotSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         float[] rotationMatrix = new float[16];
@@ -275,7 +355,7 @@ public class Timelapse extends AppCompatActivity {
 
         TextView textX = (TextView) findViewById(R.id.textViewX);
         TextView textY = (TextView) findViewById(R.id.textViewY);
-        TextView textZ = (TextView) findViewById(R.id.textViewZ);
+        //TextView textZ = (TextView) findViewById(R.id.textViewZ);
         SensorEventListener rotListener = new SensorEventListener(){
             @Override
             public void onSensorChanged(SensorEvent event) {
@@ -292,6 +372,18 @@ public class Timelapse extends AppCompatActivity {
                 }else{
                     textY.setBackgroundColor(0xFF1D171F);
                 }
+                if (continueMoving){
+                    try {
+                        msg("continued moving");
+                        continueMoving = false;
+                        //TODO not stopping if this is set
+                        Thread.sleep(1500);
+                        moveToPoint(pointA,100);
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 //textZ.setText("Z: " + Math.round(orientations[2]));
             }
 
@@ -305,8 +397,7 @@ public class Timelapse extends AppCompatActivity {
     }
 
     //UI thread
-    private class ConnectBTTime extends AsyncTask<Void, Void, Void>
-    {
+    private class ConnectBTTime extends AsyncTask<Void, Void, Void> {
         //high probability connection was successful
         private boolean ConnectSuccess = true;
 
@@ -372,8 +463,8 @@ public class Timelapse extends AppCompatActivity {
         Toast.makeText(Timelapse.this,s,Toast.LENGTH_LONG).show();
     }
 
-    private void sendPosition(){
-        TextView textZ = (TextView) findViewById(R.id.textViewZ);
+    public void sendPosition(){
+        //TextView textZ = (TextView) findViewById(R.id.textViewZ);
         int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0;
         String xDir = "0", yDir = "0";
         xJoy = joystickTime.getNormalizedX();
@@ -400,22 +491,76 @@ public class Timelapse extends AppCompatActivity {
         String msgXY =  String.format("%s%03d%s%03d",xDir,xSteps,yDir,ySteps);
         //msg(msgXY);
         Log.e("Output string", msgXY);
-        textZ.setText(msgXY);
-//        if (btSocket!=null)
-//        {
-//            try
-//            {
-//
-//                btSocket.getOutputStream().write("0".toString().getBytes());
-//            }
-//            catch (IOException e)
-//            {
-//                msg("Error");
-//            }
-//        }
+        //textZ.setText(msgXY);
+        //msg("try to send joystick position");
+        BluetoothSendString(msgXY);
     }
-    public void hideNavBar(){
+    private void BluetoothSendString(String s){
+        if (btSocket!=null)
+        {
+            try
+            {
+
+                btSocket.getOutputStream().write(s.getBytes());
+                Log.e("bluetooth string", s);
+            }
+            catch (IOException e)
+            {
+                msg("Error");
+            }
+        }
+    }
+
+    public void moveToPoint(Point p, int speed) throws InterruptedException {
+
+        int delta_x = 0, delta_y = 0, x_ratio = 34, y_ratio = 111, xSteps = 0, ySteps = 0; //34 and 111 steps per degree
+        String xDir = "0", yDir = "0";
+        int current_x_angle = Math.round(orientations[0]); //current orientations
+        int current_y_angle = Math.round(orientations[1]);
+
+        //get delta of orientations
+        delta_x = p.x_angle - current_x_angle;
+        delta_y = p.y_angle - current_y_angle;
+
+        //convert from angle to steps
+        xSteps = Math.abs(delta_x * x_ratio);
+        ySteps = Math.abs(delta_y * y_ratio);
+
+        //get directions
+        if (delta_x > 0){
+            xDir = "0";
+        }else{
+            xDir = "1";
+        }
+        if (delta_y > 0){
+            yDir = "1";
+        }else{
+            yDir = "0";
+        }
+        String msgXY =  String.format("%s%03d%s%03d",xDir,xSteps,yDir,ySteps);
+        //msg(msgXY);
+        //to fit our protocol (max 999 steps)
+        if ((xSteps > 999)||(ySteps > 999)){ //out of protocol limits
+           if (xSteps > 999){xSteps = 999;}
+           if (ySteps > 999){ySteps = 999;}
+            msgXY =  String.format("%s%03d%s%03d",xDir,xSteps,yDir,ySteps);
+            //textZ.setText(msgXY);
+            msg("Try to Send Move from MoveToPoint > 999");
+            BluetoothSendString(msgXY);
+            continueMoving = true;
+            //Thread.sleep(500);
+
+            //useSensor();
+            //moveToPoint(pointA,100);
+        }else{
+            msg("Try to Send Move from MoveToPoint < 999");
+
+            continueMoving = false;
+            BluetoothSendString(msgXY);
+        }
 
 
+
+        //send Over Bluetooth
     }
 }
