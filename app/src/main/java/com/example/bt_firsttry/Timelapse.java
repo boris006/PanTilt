@@ -359,6 +359,7 @@ public class Timelapse extends AppCompatActivity {
         SensorEventListener rotListener = new SensorEventListener(){
             @Override
             public void onSensorChanged(SensorEvent event) {
+                //TODO not executed if movetopoint is running
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
                 SensorManager.remapCoordinateSystem(rotationMatrix,SensorManager.AXIS_X,SensorManager.AXIS_Z,remappedRotationMatrix);
                 SensorManager.getOrientation(remappedRotationMatrix,orientations);
@@ -376,7 +377,7 @@ public class Timelapse extends AppCompatActivity {
                     try {
                         msg("continued moving");
                         continueMoving = false;
-                        //TODO not stopping if this is set
+                        //TODO steppers not stopping if this is set
                         Thread.sleep(1500);
                         moveToPoint(pointA,100);
 
