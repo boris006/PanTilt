@@ -65,7 +65,7 @@ public class Timelapse extends AppCompatActivity {
 
 
     //Automatic Mode Point Initialisation
-    Boolean allPointsSet = false, continueMoving = false;
+    Boolean allPointsSet = false, continueMoving = false, stringsent = true;
     Button setPoint, moveToA;
     Point pointA, pointB;
 
@@ -97,7 +97,7 @@ public class Timelapse extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timelapse_layout);
-        useSensor();
+
         //hide nav bar
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
@@ -176,7 +176,19 @@ public class Timelapse extends AppCompatActivity {
                 if (allPointsSet){
                     //TODO Hier abfragen ob Smartphone in die Halterung gesetzt wurde
                     try {
-                        moveToPoint(pointA,100);
+                        while(pointA.x_angle != orientations[0]){
+                            if (stringsent){
+
+                                moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
+                                Thread.sleep(1000);
+                            }
+
+                            //TODO update orientations
+                        }
+                        //Thread.sleep(10);
+                        //moveToPoint(pointA, 100);
+                        //msg("didnt compensate error");
+
                         //msg("Move To Point wird ausgeführt");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -202,6 +214,7 @@ public class Timelapse extends AppCompatActivity {
             //showCamera.startShowing();
 
         }
+        useSensor();
 
     }
     @Override
@@ -347,7 +360,7 @@ public class Timelapse extends AppCompatActivity {
 
     }
 
-    private void useSensor(){
+    public void useSensor(){
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor rotSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         float[] rotationMatrix = new float[16];
@@ -359,7 +372,8 @@ public class Timelapse extends AppCompatActivity {
         SensorEventListener rotListener = new SensorEventListener(){
             @Override
             public void onSensorChanged(SensorEvent event) {
-                //TODO not executed if movetopoint is running
+                //TODO code gets executed if movetopoint is running but Sensor Event has no updated data
+                //SensorManager.getRotationMatrixFromVector(rotationMatrix,);
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
                 SensorManager.remapCoordinateSystem(rotationMatrix,SensorManager.AXIS_X,SensorManager.AXIS_Z,remappedRotationMatrix);
                 SensorManager.getOrientation(remappedRotationMatrix,orientations);
@@ -373,18 +387,22 @@ public class Timelapse extends AppCompatActivity {
                 }else{
                     textY.setBackgroundColor(0xFF1D171F);
                 }
-                if (continueMoving){
-                    try {
-                        msg("continued moving");
-                        continueMoving = false;
-                        //TODO steppers not stopping if this is set
-                        Thread.sleep(1500);
-                        moveToPoint(pointA,100);
+                Log.e("state","orientations current x: " + Math.round(orientations[0]) + " current y: "+ Math.round(orientations[1]));
 
+                /*if (continueMoving&&stringsent){
+                    try {
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                }
+                    try {
+                        Log.e("state","try to move again, current x: " + Math.round(orientations[0]) + " current y: "+ Math.round(orientations[1]));
+                        continueMoving = false;
+                        moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }*/
                 //textZ.setText("Z: " + Math.round(orientations[2]));
             }
 
@@ -504,6 +522,7 @@ public class Timelapse extends AppCompatActivity {
 
                 btSocket.getOutputStream().write(s.getBytes());
                 Log.e("bluetooth string", s);
+                stringsent = true;
             }
             catch (IOException e)
             {
@@ -512,17 +531,17 @@ public class Timelapse extends AppCompatActivity {
         }
     }
 
-    public void moveToPoint(Point p, int speed) throws InterruptedException {
+    public void moveToPoint(Point p, int speed,int current_x_angle, int current_y_angle) throws InterruptedException {
 
-        int delta_x = 0, delta_y = 0, x_ratio = 34, y_ratio = 111, xSteps = 0, ySteps = 0; //34 and 111 steps per degree
+        int delta_x = 0, delta_y = 0, x_ratio = 34, y_ratio = 111, xSteps = 0, ySteps = 0, xOutPutSteps= 0, yOutPutSteps=0; //34 and 111 steps per degree
         String xDir = "0", yDir = "0";
-        int current_x_angle = Math.round(orientations[0]); //current orientations
-        int current_y_angle = Math.round(orientations[1]);
+        //int current_x_angle = Math.round(orientations[0]); //current orientations
+        //int current_y_angle = Math.round(orientations[1]);
 
         //get delta of orientations
         delta_x = p.x_angle - current_x_angle;
         delta_y = p.y_angle - current_y_angle;
-
+        Log.e("state","MoveToPoint delta x: " + delta_x + " delta y: " + delta_y);
         //convert from angle to steps
         xSteps = Math.abs(delta_x * x_ratio);
         ySteps = Math.abs(delta_y * y_ratio);
@@ -538,30 +557,36 @@ public class Timelapse extends AppCompatActivity {
         }else{
             yDir = "0";
         }
-        String msgXY =  String.format("%s%03d%s%03d",xDir,xSteps,yDir,ySteps);
-        //msg(msgXY);
+
+
         //to fit our protocol (max 999 steps)
-        if ((xSteps > 999)||(ySteps > 999)){ //out of protocol limits
-           if (xSteps > 999){xSteps = 999;}
-           if (ySteps > 999){ySteps = 999;}
-            msgXY =  String.format("%s%03d%s%03d",xDir,xSteps,yDir,ySteps);
-            //textZ.setText(msgXY);
-            msg("Try to Send Move from MoveToPoint > 999");
-            BluetoothSendString(msgXY);
+        if((xSteps > 999)||(ySteps > 999)){
+            //overflow in x or y
+            if (xSteps > 999){
+                xOutPutSteps = 999;
+                xSteps = xSteps - 999;
+            }
+            if (ySteps > 999){
+                yOutPutSteps = 999;
+                ySteps = ySteps - 999;
+            }
             continueMoving = true;
-            //Thread.sleep(500);
-
-            //useSensor();
-            //moveToPoint(pointA,100);
         }else{
-            msg("Try to Send Move from MoveToPoint < 999");
-
+            //normal
+            yOutPutSteps = ySteps;
+            xOutPutSteps = xSteps;
             continueMoving = false;
-            BluetoothSendString(msgXY);
         }
 
 
-
         //send Over Bluetooth
+        String msgXY =  String.format("%s%03d%s%03d",xDir,xOutPutSteps,yDir,yOutPutSteps);
+        //msg("Try to Send Move from MoveToPoint < 999");
+        stringsent = false;
+        BluetoothSendString(msgXY);
+        useSensor();
+
+
+
     }
 }
