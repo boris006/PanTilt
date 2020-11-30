@@ -65,7 +65,7 @@ public class Timelapse extends AppCompatActivity {
 
 
     //Automatic Mode Point Initialisation
-    Boolean allPointsSet = false, continueMoving = false, stringsent = true;
+    Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false;
     Button setPoint, moveToA;
     Point pointA, pointB;
 
@@ -175,24 +175,8 @@ public class Timelapse extends AppCompatActivity {
             {
                 if (allPointsSet){
                     //TODO Hier abfragen ob Smartphone in die Halterung gesetzt wurde
-                    try {
-                        while(pointA.x_angle != orientations[0]){
-                            if (stringsent){
+                    movePoints();
 
-                                moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
-                                Thread.sleep(1000);
-                            }
-
-                            //TODO update orientations
-                        }
-                        //Thread.sleep(10);
-                        //moveToPoint(pointA, 100);
-                        //msg("didnt compensate error");
-
-                        //msg("Move To Point wird ausgeführt");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                 }else{
                     msg("Fehler: Punkte A & B müssen gesetzt werden!");
                 }
@@ -387,23 +371,24 @@ public class Timelapse extends AppCompatActivity {
                 }else{
                     textY.setBackgroundColor(0xFF1D171F);
                 }
-                Log.e("state","orientations current x: " + Math.round(orientations[0]) + " current y: "+ Math.round(orientations[1]));
+                //Log.e("state","orientations current x: " + Math.round(orientations[0]) + " current y: "+ Math.round(orientations[1]));
 
-                /*if (continueMoving&&stringsent){
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                if((pointA.x_angle != orientations[0])&&continueMoving){
+                    Log.e("state","still need to move: " + (pointA.x_angle-orientations[0]));
+
+
+                    if (updatedSensors){
+                        //continueMoving = false;
+                        movePoints();
+                    }else{
+                        updatedSensors = true;
                     }
-                    try {
-                        Log.e("state","try to move again, current x: " + Math.round(orientations[0]) + " current y: "+ Math.round(orientations[1]));
-                        continueMoving = false;
-                        moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }*/
-                //textZ.setText("Z: " + Math.round(orientations[2]));
+
+
+
+
+
+                }
             }
 
 
@@ -532,7 +517,6 @@ public class Timelapse extends AppCompatActivity {
     }
 
     public void moveToPoint(Point p, int speed,int current_x_angle, int current_y_angle) throws InterruptedException {
-
         int delta_x = 0, delta_y = 0, x_ratio = 34, y_ratio = 111, xSteps = 0, ySteps = 0, xOutPutSteps= 0, yOutPutSteps=0; //34 and 111 steps per degree
         String xDir = "0", yDir = "0";
         //int current_x_angle = Math.round(orientations[0]); //current orientations
@@ -588,5 +572,28 @@ public class Timelapse extends AppCompatActivity {
 
 
 
+    }
+
+
+    public void movePoints(){ //function called by onclick
+            updatedSensors = false;
+            if(pointA.x_angle != orientations[0]){
+                if (stringsent){
+                    try {
+                    moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
+                    Thread.sleep(1000);
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //useSensor();
+
+                //TODO update orientations
+            }
+            //Thread.sleep(10);
+            //moveToPoint(pointA, 100);
+            //msg("didnt compensate error");
+
+            //msg("Move To Point wird ausgeführt");
+        }
     }
 }
