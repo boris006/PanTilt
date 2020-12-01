@@ -1,18 +1,15 @@
 package com.example.bt_firsttry;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
-import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -53,6 +50,36 @@ public class DeviceList extends AppCompatActivity {
         myBluetooth = BluetoothAdapter.getDefaultAdapter();
 
         //look if it is has one and if it isnt available try to enable it
+        checkBluetoothEnabled();
+
+        //pairedDevicesList();
+
+        //OnClickListener for btnPaired
+        btnPaired.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                //if clicked call function
+                checkBluetoothEnabled();
+                //pairedDevicesList();
+            }
+        });
+        startTimelapse.setOnClickListener(new View.OnClickListener() {
+            //@RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View v) {
+                //start Timelapse
+                Intent i = new Intent(getApplicationContext(), Control.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.zoom_in,R.anim.static_animation);
+
+            }
+        });
+    }
+
+
+    //function to check if a Bluetooth module is enabled, otherwise try to turn it on and show paired devices List
+    private void checkBluetoothEnabled(){
         if(myBluetooth == null) {
 
             //show message that the device has no bluetooth adapter
@@ -68,30 +95,11 @@ public class DeviceList extends AppCompatActivity {
             Intent turnBTon = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnBTon,1);
         }
-
-        pairedDevicesList();
-
-        //OnClickListener for btnPaired
-        btnPaired.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                //if clicked call function
-                pairedDevicesList();
-            }
-        });
-        startTimelapse.setOnClickListener(new View.OnClickListener() {
-            //@RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void onClick(View v) {
-                //start Timelapse
-                Intent i = new Intent(getApplicationContext(), Control.class);
-                startActivity(i);
-                overridePendingTransition(R.anim.zoom_in,R.anim.static_animation);
-
-            }
-        });
+        if(myBluetooth.isEnabled()){
+            pairedDevicesList();
+        }
     }
+
 
     //function pairedDevicesList shows paired Devices on screen
     private void pairedDevicesList()
@@ -123,7 +131,6 @@ public class DeviceList extends AppCompatActivity {
         deviceList.setOnItemClickListener(myListClickListener);
 
     }
-
     private AdapterView.OnItemClickListener myListClickListener = new AdapterView.OnItemClickListener()
     {
 
