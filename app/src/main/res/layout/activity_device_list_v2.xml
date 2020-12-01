@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/motionDevices"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#001D171F"
+    app:layoutDescription="@xml/activity_device_list_v2_scene2"
+    tools:context=".DeviceList"
+    tools:showPaths="true">
+
+    <ImageView
+        android:id="@+id/headerImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/linearDeviceLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/rui_xu_kd698ngcbwu_unsplash1" />
+
+    <LinearLayout
+        android:id="@+id/linearDeviceLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/back_grey"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/txt_Details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/detail_orange"
+            android:fontFamily="@font/raleway_semibold"
+            android:padding="25sp"
+            android:text="Select the Tilt Pan you want to use. If it is not listed please pair to your device in your Bluetooth settings."
+            android:textColor="#FFFFFF"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/btnDevices"
+            style="@style/RefreshStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/refresh_orange"
+            android:fontFamily="@font/raleway_semibold"
+            android:paddingLeft="25sp"
+            android:text="Refresh Devices"
+            android:textAlignment="viewStart"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/startTimelapse"
+            style="@style/RefreshStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LED Control"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ListView
+            android:id="@+id/listDevices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:cacheColorHint="#00FEFEFE">
+
+        </ListView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearTitleLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/linearDeviceLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/txt_Choose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/title_layout_background"
+            android:fontFamily="@font/raleway_semibold"
+            android:padding="32dp"
+            android:text="Drag up to\nchoose your Device"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

@@ -44,8 +44,8 @@ public class Control extends AppCompatActivity {
         setContentView(R.layout.activity_control);
 
 
-        Intent newInt = getIntent();
-        address = newInt.getStringExtra(DeviceList.EXTRA_ADDRESS);
+        //Intent newInt = getIntent();
+        //address = newInt.getStringExtra(DeviceList.EXTRA_ADDRESS);
 
         //call the widgets
         On = (Button)findViewById(R.id.btnOn);

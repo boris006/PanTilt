@@ -42,7 +42,7 @@ public class DeviceList extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_list);
+        setContentView(R.layout.activity_device_list_v2);
 
         //calling widgets
         btnPaired =(Button)findViewById(R.id.btnDevices);
@@ -68,6 +68,9 @@ public class DeviceList extends AppCompatActivity {
             Intent turnBTon = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnBTon,1);
         }
+
+        pairedDevicesList();
+
         //OnClickListener for btnPaired
         btnPaired.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,12 +85,9 @@ public class DeviceList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //start Timelapse
-                if (checkPermission()) {
-                    Intent i = new Intent(getApplicationContext(), Timelapse.class);
-                    startActivity(i);
-                }else{
-                    //Do nothing
-                }
+                Intent i = new Intent(getApplicationContext(), Control.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.zoom_in,R.anim.static_animation);
 
             }
         });
@@ -140,6 +140,9 @@ public class DeviceList extends AppCompatActivity {
             i.putExtra(EXTRA_ADDRESS, address);
             //Change activity
             startActivity(i);
+            overridePendingTransition(R.anim.zoom_in,R.anim.static_animation);
+
+
 
         }
     };
