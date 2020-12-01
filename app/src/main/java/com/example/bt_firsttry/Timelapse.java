@@ -65,8 +65,8 @@ public class Timelapse extends AppCompatActivity {
 
 
     //Automatic Mode Point Initialisation
-    Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false;
-    Button setPoint, moveToA;
+    Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false, positionA = false;
+    Button setPoint, moveTo;
     Point pointA, pointB;
 
     class Point{
@@ -161,6 +161,7 @@ public class Timelapse extends AppCompatActivity {
                         pointB.reset();
                         setPoint.setText("Punkt A setzen");
                         allPointsSet = false;
+                        positionA = false;
                     }
 
                 }
@@ -168,23 +169,41 @@ public class Timelapse extends AppCompatActivity {
             }
         });
         //Move To Point A to Initialize
-        moveToA = (Button)findViewById(R.id.moveToA);
-        moveToA.setOnClickListener(new View.OnClickListener() {
+        moveTo = (Button)findViewById(R.id.moveToA);
+        moveTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                if (allPointsSet){
-                    //TODO Hier abfragen ob Smartphone in die Halterung gesetzt wurde
-                    //moves to point A without checking the error
+                if (positionA){
+                    //position = point A
+                    positionA = false;
                     try {
-                        moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
-                    } catch (InterruptedException e) {
+                        startTimelapse();
+                        moveToPoint(pointB,5,Math.round(orientations[0]),Math.round(orientations[1]));
+                        Thread.sleep(4000);
+                        startTimelapse();
+                    } catch (InterruptedException | IOException e) {
                         e.printStackTrace();
                     }
 
+
                 }else{
-                    msg("Fehler: Punkte A & B müssen gesetzt werden!");
+                    if (allPointsSet){
+                        //TODO Hier abfragen ob Smartphone in die Halterung gesetzt wurde
+                        //moves to point A without checking the error
+                        try {
+                            moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        positionA = true;
+                        moveTo.setText("Bewege zu B");
+                    }else{
+                        msg("Fehler: Punkte A & B müssen gesetzt werden!");
+
+                    }
                 }
+
             }
         });
 
@@ -267,7 +286,7 @@ public class Timelapse extends AppCompatActivity {
 
     }
 
-    public void startTimelapse(View v) throws IOException {
+    public void startTimelapse() throws IOException {
         //
         if (recording == Boolean.FALSE) { //not recording yet but starting
             //MediaRecorder recorder = new MediaRecorder();
@@ -570,7 +589,7 @@ public class Timelapse extends AppCompatActivity {
             String msgXY =  String.format("%s%03d%s%03d",xDir,xOutPutSteps,yDir,yOutPutSteps);
             stringsent = false;
             BluetoothSendString(msgXY);
-
+            Thread.sleep(100-speed);
             }
             //normal
 
