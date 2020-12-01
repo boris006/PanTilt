@@ -97,7 +97,7 @@ public class Timelapse extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timelapse_layout);
-
+        useSensor();
         //hide nav bar
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
@@ -203,7 +203,6 @@ public class Timelapse extends AppCompatActivity {
             //showCamera.startShowing();
 
         }
-        useSensor();
 
     }
     @Override
@@ -378,28 +377,28 @@ public class Timelapse extends AppCompatActivity {
                 }
                 //Log.e("state","orientations current x: " + Math.round(orientations[0]) + " current y: "+ Math.round(orientations[1]));
 
-                if((pointA.x_angle != orientations[0])&&continueMoving){
-                    Log.e("state","still need to move: " + (pointA.x_angle-orientations[0]));
-
-
-                    if (updatedSensors){
-                        //continueMoving = false;
-                        try {
-                            Thread.sleep(1500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        Log.e("state","try to move to Point again");
-                        //movePoints();
-                    }else{
-                        updatedSensors = true;
-                    }
-
-
-
-
-
-                }
+//                if((pointA.x_angle != orientations[0])&&continueMoving){
+//                    Log.e("state","still need to move: " + (pointA.x_angle-orientations[0]));
+//
+//
+//                    if (updatedSensors){
+//                        //continueMoving = false;
+//                        try {
+//                            Thread.sleep(1500);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        Log.e("state","try to move to Point again");
+//                        //movePoints();
+//                    }else{
+//                        updatedSensors = true;
+//                    }
+//
+//
+//
+//
+//
+//                }
             }
 
 
@@ -408,7 +407,7 @@ public class Timelapse extends AppCompatActivity {
 
             }
         };
-        sensorManager.registerListener(rotListener,rotSensor,SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(rotListener,rotSensor,SensorManager.SENSOR_DELAY_UI);
     }
 
     //UI thread
@@ -479,7 +478,7 @@ public class Timelapse extends AppCompatActivity {
     }
 
     public void sendPosition(){
-        //TextView textZ = (TextView) findViewById(R.id.textViewZ);
+        TextView textZ = (TextView) findViewById(R.id.textViewZ);
         int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0;
         String xDir = "0", yDir = "0";
         xJoy = joystickTime.getNormalizedX();
@@ -506,7 +505,7 @@ public class Timelapse extends AppCompatActivity {
         String msgXY =  String.format("%s%03d%s%03d",xDir,xSteps,yDir,ySteps);
         //msg(msgXY);
         Log.e("Output string", msgXY);
-        //textZ.setText(msgXY);
+        textZ.setText(msgXY);
         //msg("try to send joystick position");
         BluetoothSendString(msgXY);
     }
@@ -518,11 +517,7 @@ public class Timelapse extends AppCompatActivity {
 
                 btSocket.getOutputStream().write(s.getBytes());
                 Log.e("bluetooth string", s);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
                 stringsent = true;
             }
             catch (IOException e)
