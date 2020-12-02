@@ -109,4 +109,14 @@
         app:layout_constraintBottom_toTopOf="@+id/setPoint"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:id="@+id/textViewData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#1D171F"
+        android:text="TextView"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewZ" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
