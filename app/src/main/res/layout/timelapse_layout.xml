@@ -12,7 +12,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#1D171F"
-        android:onClick="startTimelapse"
         android:text="Timelapse Starten"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"

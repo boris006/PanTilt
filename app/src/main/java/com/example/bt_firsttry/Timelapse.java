@@ -537,7 +537,7 @@ public class Timelapse extends AppCompatActivity {
             yDir = "1";
         }
 
-        String msgXY =  String.format("%s%03d%s%03d",xDir,xSteps,yDir,ySteps);
+        String msgXY =  String.format("%s%05d%s%05d",xDir,xSteps,yDir,ySteps);
         //msg(msgXY);
         Log.e("Output string", msgXY);
         textZ.setText(msgXY);
@@ -590,29 +590,10 @@ public class Timelapse extends AppCompatActivity {
         }
 
 
-        //to fit our protocol (max 999 steps)
-        while(((xSteps > 999)||(ySteps > 999))&&stringsent){
-            //overflow in x or y
-            //TODO sensor event doesnt get updated (bad)
-            if (xSteps > 999){
-                xOutPutSteps = 999;
-                xSteps = xSteps - 999;
-            }
-            if (ySteps > 999){
-                yOutPutSteps = 999;
-                ySteps = ySteps - 999;
-            }
-            String msgXY =  String.format("%s%03d%s%03d",xDir,xOutPutSteps,yDir,yOutPutSteps);
-            stringsent = false;
-            BluetoothSendString(msgXY);
-            Thread.sleep(100-speed);
-            }
-            //normal
-
             //TODO sensor event gets updated (good)
             yOutPutSteps = ySteps;
             xOutPutSteps = xSteps;
-            String msgXY =  String.format("%s%03d%s%03d",xDir,xOutPutSteps,yDir,yOutPutSteps);
+            String msgXY =  String.format("%s%05d%s%05d",xDir,xOutPutSteps,yDir,yOutPutSteps);
             stringsent = false;
             BluetoothSendString(msgXY);
 
