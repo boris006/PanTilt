@@ -640,13 +640,7 @@ public class Timelapse extends AppCompatActivity {
                                             Log.e("Input string", data);
                                         }
                                     });
-                                    /*handler.post(new Runnable()
-                                    {
-                                        public void run()
-                                        {
 
-                                        }
-                                    });*/
                                 }
                                 else
                                 {
