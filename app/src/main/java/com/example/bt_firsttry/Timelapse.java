@@ -79,7 +79,7 @@ public class Timelapse extends AppCompatActivity {
     //Automatic Mode Point Initialisation
     Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false, positionA = false;
     Button setPoint, moveTo;
-    Point pointA, pointB;
+    Point pointA, pointB, destination, position;
 
     class Point{
         int x_angle;
@@ -187,15 +187,15 @@ public class Timelapse extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                if (positionA){
-                    //position = point A
-                    positionA = false;
+                if (position == pointA){
                     try {
-                        startTimelapse();
+                        //startTimelapse();
+                        destination = pointB;
                         moveToPoint(pointB,5,Math.round(orientations[0]),Math.round(orientations[1]));
-                        Thread.sleep(4000);
-                        startTimelapse();
-                    } catch (InterruptedException | IOException e) {
+
+                        //Thread.sleep(4000);
+                        //startTimelapse();
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
@@ -204,14 +204,18 @@ public class Timelapse extends AppCompatActivity {
                     if (allPointsSet){
                         //TODO Hier abfragen ob Smartphone in die Halterung gesetzt wurde
                         //moves to point A without checking the error
+                        moveTo.setText("Bewege zu A");
                         try {
+                            destination = pointA;
                             moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
+
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        positionA = true;
+
                         moveTo.setText("Bewege zu B");
                     }else{
+
                         msg("Fehler: Punkte A & B müssen gesetzt werden!");
 
                     }
@@ -407,30 +411,7 @@ public class Timelapse extends AppCompatActivity {
                 }else{
                     textY.setBackgroundColor(0xFF1D171F);
                 }
-                //Log.e("state","orientations current x: " + Math.round(orientations[0]) + " current y: "+ Math.round(orientations[1]));
 
-//                if((pointA.x_angle != orientations[0])&&continueMoving){
-//                    Log.e("state","still need to move: " + (pointA.x_angle-orientations[0]));
-//
-//
-//                    if (updatedSensors){
-//                        //continueMoving = false;
-//                        try {
-//                            Thread.sleep(1500);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                        Log.e("state","try to move to Point again");
-//                        //movePoints();
-//                    }else{
-//                        updatedSensors = true;
-//                    }
-//
-//
-//
-//
-//
-//                }
             }
 
 
@@ -602,8 +583,7 @@ public class Timelapse extends AppCompatActivity {
 
     }
 
-    void beginListenForData()
-    {
+    void beginListenForData(){
         //final Handler handler = new Handler();
         final Handler handlerInput = new Handler(Looper.getMainLooper());
         final byte delimiter = 78; //This is the ASCII code for a newline character
@@ -639,6 +619,12 @@ public class Timelapse extends AppCompatActivity {
                                         public void run() {
                                             myLabel.setText(data);
                                             Log.e("Input string", data);
+
+                                            try {
+                                                checkError();
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
                                     });
 
@@ -660,5 +646,10 @@ public class Timelapse extends AppCompatActivity {
 
         workerThread.start();
     }
-
+    public void checkError() throws InterruptedException {
+        if (allPointsSet) {
+            moveToPoint(destination, 100, Math.round(orientations[0]), Math.round(orientations[1]));
+            position = destination;
+        }
+    }
 }
