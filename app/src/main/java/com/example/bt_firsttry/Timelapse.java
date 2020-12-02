@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -133,6 +134,7 @@ public class Timelapse extends AppCompatActivity {
         address = newInt.getStringExtra(DeviceList.EXTRA_ADDRESS);
         Log.e("state","on create after intent bt");
         new ConnectBTTime().execute();
+        //beginListenForData();
 
         //create Joystick
         crossView = (CustomView) findViewById(R.id.CustomView);
@@ -470,6 +472,9 @@ public class Timelapse extends AppCompatActivity {
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
                     //start connection over socket
                     btSocket.connect();
+                    mmInputStream = btSocket.getInputStream();
+                    Looper.prepare();
+                    beginListenForData();
                 }
             }
             catch (IOException e)
@@ -617,8 +622,9 @@ public class Timelapse extends AppCompatActivity {
 
     void beginListenForData()
     {
-        final Handler handler = new Handler();
-        final byte delimiter = 10; //This is the ASCII code for a newline character
+        //final Handler handler = new Handler();
+        final Handler handlerInput = new Handler(Looper.getMainLooper());
+        final byte delimiter = 78; //This is the ASCII code for a newline character
         TextView myLabel = (TextView) findViewById(R.id.textViewData);
         stopWorker = false;
         readBufferPosition = 0;
@@ -641,18 +647,25 @@ public class Timelapse extends AppCompatActivity {
                                 byte b = packetBytes[i];
                                 if(b == delimiter)
                                 {
+                                    Log.e("Input string", "delimiter correct");
                                     byte[] encodedBytes = new byte[readBufferPosition];
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
                                     final String data = new String(encodedBytes, "US-ASCII");
                                     readBufferPosition = 0;
-
-                                    handler.post(new Runnable()
+                                    handlerInput.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            myLabel.setText(data);
+                                            Log.e("Input string", data);
+                                        }
+                                    });
+                                    /*handler.post(new Runnable()
                                     {
                                         public void run()
                                         {
-                                            myLabel.setText(data);
+
                                         }
-                                    });
+                                    });*/
                                 }
                                 else
                                 {
