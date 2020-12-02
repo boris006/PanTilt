@@ -590,6 +590,7 @@ public class Timelapse extends AppCompatActivity {
         }
 
 
+
             //TODO sensor event gets updated (good)
             yOutPutSteps = ySteps;
             xOutPutSteps = xSteps;
