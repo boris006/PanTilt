@@ -78,18 +78,20 @@ public class Timelapse extends AppCompatActivity {
 
     //Automatic Mode Point Initialisation
     Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false, positionA = false;
-    Button setPoint, moveTo;
+    Button setPoint, moveToA, moveToB;
     Point pointA, pointB, destination, position;
 
     class Point{
         int x_angle;
         int y_angle;
         boolean isSet;
+        String name;
 
         public Point(){
             x_angle = 0;
             y_angle = 0;
             isSet = false;
+            name = "";
          }
          public void setFromOrientation(){
              x_angle = Math.round(orientations[0]);
@@ -100,6 +102,7 @@ public class Timelapse extends AppCompatActivity {
              x_angle = 0;
              y_angle = 0;
              isSet = false;
+             name = "";
          }
     }
 
@@ -163,18 +166,27 @@ public class Timelapse extends AppCompatActivity {
                 //has a been initialised?
                 if (pointA.isSet == false){
                     pointA.setFromOrientation();
+                    pointA.name = "A";
                     setPoint.setText("Punkt B setzen");
+                    moveToA.setEnabled(true);
+                    moveToA.setVisibility(View.VISIBLE);
                 }else{
                     if (pointB.isSet == false){
                         pointB.setFromOrientation();
-                        setPoint.setText("A & B gesetzt");
+                        pointA.name = "B";
+                        setPoint.setText("Punkte Zurücksetzen");
                         allPointsSet = true;
+                        moveToB.setEnabled(true);
+                        moveToB.setVisibility(View.VISIBLE);
                     }else{
                         pointA.reset();
                         pointB.reset();
                         setPoint.setText("Punkt A setzen");
+                        moveToA.setEnabled(false);
+                        moveToA.setVisibility(View.INVISIBLE);
+                        moveToB.setEnabled(false);
+                        moveToB.setVisibility(View.INVISIBLE);
                         allPointsSet = false;
-                        positionA = false;
                     }
 
                 }
@@ -182,48 +194,43 @@ public class Timelapse extends AppCompatActivity {
             }
         });
         //Move To Point A to Initialize
-        moveTo = (Button)findViewById(R.id.moveToA);
-        moveTo.setOnClickListener(new View.OnClickListener() {
+        moveToA = (Button)findViewById(R.id.moveToA);
+        moveToA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                if (position == pointA){
                     try {
                         //startTimelapse();
-                        destination = pointB;
-                        moveToPoint(pointB,5,Math.round(orientations[0]),Math.round(orientations[1]));
+                        destination = pointA;
+                        moveToPoint(pointA,5,Math.round(orientations[0]),Math.round(orientations[1]));
 
                         //Thread.sleep(4000);
                         //startTimelapse();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
-
-                }else{
-                    if (allPointsSet){
-                        //TODO Hier abfragen ob Smartphone in die Halterung gesetzt wurde
-                        //moves to point A without checking the error
-                        moveTo.setText("Bewege zu A");
-                        try {
-                            destination = pointA;
-                            moveToPoint(pointA,100,Math.round(orientations[0]),Math.round(orientations[1]));
-
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        moveTo.setText("Bewege zu B");
-                    }else{
-
-                        msg("Fehler: Punkte A & B müssen gesetzt werden!");
-
-                    }
-                }
-
             }
         });
 
+        moveToB = (Button)findViewById(R.id.moveToB);
+        moveToB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                try {
+                    destination = pointB;
+                    moveToPoint(pointB,5,Math.round(orientations[0]),Math.round(orientations[1]));
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+                }
+
+
+
+        });
 
     }
     @Override
@@ -648,6 +655,7 @@ public class Timelapse extends AppCompatActivity {
     }
     public void checkError() throws InterruptedException {
         if (allPointsSet) {
+
             moveToPoint(destination, 100, Math.round(orientations[0]), Math.round(orientations[1]));
             position = destination;
         }

@@ -102,11 +102,21 @@
 
     <Button
         android:id="@+id/moveToA"
-        android:layout_width="136dp"
-        android:layout_height="50dp"
+        android:layout_width="123dp"
+        android:layout_height="84dp"
         android:text="Bewege zu A"
-        app:layout_constraintBottom_toTopOf="@+id/setPoint"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="invisible" />
+
+    <Button
+        android:id="@+id/moveToB"
+        android:layout_width="123dp"
+        android:layout_height="84dp"
+        android:text="Bewege zu B"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="invisible" />
 
     <TextView
         android:id="@+id/textViewData"
