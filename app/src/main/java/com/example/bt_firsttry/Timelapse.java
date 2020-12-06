@@ -5,10 +5,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -26,8 +24,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +36,6 @@ import com.example.bt_firsttry.views.CustomView;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -68,7 +65,7 @@ public class Timelapse extends AppCompatActivity {
     //set UUID
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    //TextView myLabel;
+    //TextView BT Inputstream;
     InputStream mmInputStream;
     Thread workerThread;
     byte[] readBuffer;
@@ -80,6 +77,10 @@ public class Timelapse extends AppCompatActivity {
     Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false, positionA = false;
     Button setPoint, moveToA, moveToB;
     Point pointA, pointB, destination, position;
+
+    //SeekBar
+    TextView txtSpeed;
+
 
     class Point{
         int x_angle;
@@ -232,6 +233,13 @@ public class Timelapse extends AppCompatActivity {
 
         });
 
+        //SeekBar and text
+        txtSpeed = (TextView) findViewById(R.id.textViewSpeed);
+        SeekBar seekBarSpeed = findViewById(R.id.seekBarSpeed);
+        seekBarSpeed.setOnSeekBarChangeListener(seekBarChangeListener);
+        int progress = seekBarSpeed.getProgress();
+        txtSpeed.setText("Speed: " + progress);
+
     }
     @Override
     protected void onResume(){
@@ -285,6 +293,24 @@ public class Timelapse extends AppCompatActivity {
         }
     }
 
+    SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+
+        @Override
+        public void onProgressChanged(SeekBar seekBarSpeed, int progress, boolean fromUser) {
+            // updated continuously as the user slides the thumb
+            txtSpeed.setText("Speed: " + progress);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBarSpeed) {
+            // called when the user first touches the SeekBar
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBarSpeed) {
+            // called after the user finishes moving the SeekBar
+        }
+    };
 
     private String getOutputVideoFilePath() {
         // Create a media file name
@@ -429,6 +455,7 @@ public class Timelapse extends AppCompatActivity {
         };
         sensorManager.registerListener(rotListener,rotSensor,SensorManager.SENSOR_DELAY_UI);
     }
+
 
     //UI thread
     private class ConnectBTTime extends AsyncTask<Void, Void, Void> {

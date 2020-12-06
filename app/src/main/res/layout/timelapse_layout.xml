@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#001D171F"
+    android:scrollbarSize="10sp"
     tools:context=".Timelapse">
 
     <Button
@@ -127,5 +128,28 @@
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewZ" />
+
+    <TextView
+        android:id="@+id/textViewSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#1D171F"
+        android:text="TextView"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarSpeed"
+        app:layout_constraintEnd_toEndOf="@+id/seekBarSpeed"
+        app:layout_constraintStart_toStartOf="@+id/seekBarSpeed" />
+
+    <SeekBar
+        android:id="@+id/seekBarSpeed"
+        android:layout_width="144dp"
+        android:layout_height="51dp"
+        android:layout_marginBottom="10dp"
+        android:foregroundTint="#ED1A1A"
+        android:progress="50"
+        android:progressTint="#E31F1F"
+        android:thumbTint="#D008E6"
+        app:layout_constraintBottom_toTopOf="@+id/joystickCamera"
+        app:layout_constraintStart_toStartOf="@+id/joystickCamera" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
