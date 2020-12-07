@@ -80,7 +80,7 @@ public class Timelapse extends AppCompatActivity {
 
     //SeekBar
     TextView txtSpeed;
-
+    int speed_ratio;
 
     class Point{
         int x_angle;
@@ -203,7 +203,7 @@ public class Timelapse extends AppCompatActivity {
                     try {
                         //startTimelapse();
                         destination = pointA;
-                        moveToPoint(pointA,5,Math.round(orientations[0]),Math.round(orientations[1]));
+                        moveToPoint(pointA,1,Math.round(orientations[0]),Math.round(orientations[1]));
 
                         //Thread.sleep(4000);
                         //startTimelapse();
@@ -220,7 +220,7 @@ public class Timelapse extends AppCompatActivity {
             {
                 try {
                     destination = pointB;
-                    moveToPoint(pointB,5,Math.round(orientations[0]),Math.round(orientations[1]));
+                    moveToPoint(pointB,1,Math.round(orientations[0]),Math.round(orientations[1]));
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -299,6 +299,7 @@ public class Timelapse extends AppCompatActivity {
         public void onProgressChanged(SeekBar seekBarSpeed, int progress, boolean fromUser) {
             // updated continuously as the user slides the thumb
             txtSpeed.setText("Speed: " + progress);
+            speed_ratio = progress;
         }
 
         @Override
@@ -529,7 +530,7 @@ public class Timelapse extends AppCompatActivity {
 
     public void sendPosition(){
         TextView textZ = (TextView) findViewById(R.id.textViewZ);
-        int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0;
+        int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0, xSpeed = speed_ratio*10, ySpeed = speed_ratio*10;
         String xDir = "0", yDir = "0";
         xJoy = joystickTime.getNormalizedX();
         yJoy = joystickTime.getNormalizedY();
@@ -552,7 +553,8 @@ public class Timelapse extends AppCompatActivity {
             yDir = "1";
         }
 
-        String msgXY =  String.format("%s%05d%s%05d",xDir,xSteps,yDir,ySteps);
+        String msgXY =  String.format("%s%05d%04d%s%05d%04d",xDir,xSteps,xSpeed,yDir,ySteps,ySpeed);
+       // String msgXY =  String.format("%s%05d%s%05d",xDir,xSteps,yDir,ySteps);
         //msg(msgXY);
         Log.e("Output string", msgXY);
         textZ.setText(msgXY);
@@ -577,17 +579,20 @@ public class Timelapse extends AppCompatActivity {
         }
     }
 
-    public void moveToPoint(Point p, int speed,int current_x_angle, int current_y_angle) throws InterruptedException {
+    public void moveToPoint(Point p, int time,int current_x_angle, int current_y_angle) throws InterruptedException {
         int delta_x = 0, delta_y = 0 , y_ratio = 111, xSteps = 0, ySteps = 0, xOutPutSteps= 0, yOutPutSteps=0; //34 and 111 steps per degree
         String xDir = "0", yDir = "0";
         float x_ratio = (float) 33.77;
+        int xSpeed, ySpeed = 0;
         //int current_x_angle = Math.round(orientations[0]); //current orientations
         //int current_y_angle = Math.round(orientations[1]);
+
 
         //get delta of orientations
         delta_x = p.x_angle - current_x_angle;
         delta_y = p.y_angle - current_y_angle;
         Log.e("state","MoveToPoint delta x: " + delta_x + " delta y: " + delta_y);
+
         //convert from angle to steps
         xSteps = Math.abs(Math.round(delta_x * x_ratio));
         ySteps = Math.abs(delta_y * y_ratio);
@@ -599,19 +604,21 @@ public class Timelapse extends AppCompatActivity {
             xDir = "1";
         }
         if (delta_y > 0){
-            yDir = "1";
-        }else{
             yDir = "0";
+        }else{
+            yDir = "1";
         }
 
+        //calculate Speeds in step/s at a given time in minutes
+        xSpeed = Math.round(xSteps/(time*60));
+        ySpeed = Math.round(ySteps/(time*60));
 
 
-            //TODO sensor event gets updated (good)
-            yOutPutSteps = ySteps;
-            xOutPutSteps = xSteps;
-            String msgXY =  String.format("%s%05d%s%05d",xDir,xOutPutSteps,yDir,yOutPutSteps);
-            stringsent = false;
-            BluetoothSendString(msgXY);
+        yOutPutSteps = ySteps;
+        xOutPutSteps = xSteps;
+        String msgXY =  String.format("%s%05d%04d%s%05d%04d",xDir,xOutPutSteps,xSpeed,yDir,yOutPutSteps,ySpeed);
+        stringsent = false;
+        BluetoothSendString(msgXY);
 
 
 
@@ -680,11 +687,32 @@ public class Timelapse extends AppCompatActivity {
 
         workerThread.start();
     }
+
     public void checkError() throws InterruptedException {
         if (allPointsSet) {
 
-            moveToPoint(destination, 100, Math.round(orientations[0]), Math.round(orientations[1]));
+            moveToPoint(destination, 1, Math.round(orientations[0]), Math.round(orientations[1]));
             position = destination;
         }
     }
+
+
+    public void handleAutomatic(){
+
+
+        //move to A
+
+        //calculate ab and bc time
+
+        //start recording
+
+        //move to b, speed
+
+        //move to c. speed
+
+        //stop recording
+
+    }
+
+
 }
