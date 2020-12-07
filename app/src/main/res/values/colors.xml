@@ -11,5 +11,7 @@
     <color name="detail_orange">#FFa84e15</color>
     <color name="refresh_orange">#FF9f8260</color>
     <color name="back_grey">#FF314042</color>
+    <color name="btn_on">#FF9e8131</color>
+    <color name="btn_off">#FF695520</color>
 
 </resources>

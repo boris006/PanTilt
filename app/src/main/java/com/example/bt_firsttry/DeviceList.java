@@ -136,7 +136,7 @@ public class DeviceList extends AppCompatActivity {
 
         @Override
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-            //get the devices MAC adresss, meaning the last 17chars in the view
+            //get the devices MAC address, meaning the last 17chars in the view
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
             //TODO: try getApplicationContext() instead of DeviceList.this->works

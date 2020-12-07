@@ -45,11 +45,12 @@
         android:id="@+id/textViewX"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="196dp"
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/textViewY"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/b_x"
@@ -58,8 +59,8 @@
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintStart_toEndOf="@+id/btn_b"
-        tools:layout_editor_absoluteY="259dp" />
+        app:layout_constraintEnd_toStartOf="@+id/btn_b"
+        app:layout_constraintTop_toTopOf="@+id/btn_b" />
 
     <TextView
         android:id="@+id/b_y"
@@ -68,7 +69,7 @@
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintStart_toEndOf="@+id/btn_b"
+        app:layout_constraintStart_toStartOf="@+id/b_x"
         app:layout_constraintTop_toBottomOf="@+id/b_x" />
 
     <TextView
@@ -78,18 +79,19 @@
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/textViewZ"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/textViewX"
+        app:layout_constraintTop_toBottomOf="@+id/textViewX" />
 
     <TextView
-        android:id="@+id/textViewZ"
+        android:id="@+id/txt_btSendString"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/timelapse"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/textViewX"
+        app:layout_constraintTop_toTopOf="@+id/textViewX" />
 
     <view
         android:id="@+id/joystickCamera"
@@ -110,8 +112,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Punkt A Setzen"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="364dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/moveToA"
@@ -142,8 +144,8 @@
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewZ" />
+        app:layout_constraintEnd_toEndOf="@+id/txt_btSendString"
+        app:layout_constraintTop_toBottomOf="@+id/txt_btSendString" />
 
     <TextView
         android:id="@+id/textViewSpeed"
@@ -152,22 +154,21 @@
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/seekBarSpeed"
         app:layout_constraintEnd_toEndOf="@+id/seekBarSpeed"
-        app:layout_constraintStart_toStartOf="@+id/seekBarSpeed" />
+        app:layout_constraintStart_toStartOf="@+id/seekBarSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarSpeed" />
 
     <SeekBar
         android:id="@+id/seekBarSpeed"
         android:layout_width="144dp"
         android:layout_height="51dp"
         android:layout_marginEnd="144dp"
-        android:layout_marginBottom="340dp"
         android:foregroundTint="#ED1A1A"
         android:progress="50"
         android:progressTint="#E31F1F"
         android:thumbTint="#D008E6"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_i"
@@ -175,8 +176,8 @@
         android:layout_height="wrap_content"
         android:text="i"
         android:textAllCaps="false"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="48dp" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_settings"
+        app:layout_constraintTop_toBottomOf="@+id/btn_settings" />
 
     <Button
         android:id="@+id/btn_joy"
@@ -184,8 +185,8 @@
         android:layout_height="wrap_content"
         android:text="Joy"
         android:textAllCaps="false"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="96dp" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_i"
+        app:layout_constraintTop_toBottomOf="@+id/btn_i" />
 
     <Button
         android:id="@+id/btn_settings"
@@ -193,17 +194,18 @@
         android:layout_height="wrap_content"
         android:text="Settings"
         android:textAllCaps="false"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="0dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_motion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:text="Motion"
         android:textAllCaps="false"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="146dp" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_joy"
+        app:layout_constraintTop_toBottomOf="@+id/btn_joy" />
 
     <Button
         android:id="@+id/btn_block"
@@ -211,8 +213,8 @@
         android:layout_height="wrap_content"
         android:text="Block"
         android:textAllCaps="false"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="194dp" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_motion"
+        app:layout_constraintTop_toBottomOf="@+id/btn_motion" />
 
     <Button
         android:id="@+id/btn_points"
@@ -220,16 +222,17 @@
         android:layout_height="wrap_content"
         android:text="Points"
         android:textAllCaps="false"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="242dp" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_block"
+        app:layout_constraintTop_toBottomOf="@+id/btn_block" />
 
     <Button
         android:id="@+id/btn_a"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="68dp"
         android:text="A"
-        tools:layout_editor_absoluteX="602dp"
-        tools:layout_editor_absoluteY="205dp" />
+        app:layout_constraintBottom_toTopOf="@+id/timelapse"
+        app:layout_constraintEnd_toEndOf="@+id/timelapse" />
 
     <view
         android:id="@+id/CustomView"
@@ -247,8 +250,8 @@
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@+id/c_x"
-        tools:layout_editor_absoluteX="521dp" />
+        app:layout_constraintEnd_toEndOf="@+id/c_x"
+        app:layout_constraintTop_toBottomOf="@+id/c_x" />
 
     <TextView
         android:id="@+id/c_x"
@@ -257,7 +260,7 @@
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintStart_toEndOf="@+id/btn_c"
+        app:layout_constraintEnd_toStartOf="@+id/btn_c"
         app:layout_constraintTop_toTopOf="@+id/btn_c" />
 
     <TextView
@@ -267,7 +270,7 @@
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintStart_toEndOf="@+id/btn_a"
+        app:layout_constraintEnd_toStartOf="@+id/btn_a"
         app:layout_constraintTop_toTopOf="@+id/btn_a" />
 
     <TextView
@@ -277,24 +280,28 @@
         android:background="#1D171F"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        app:layout_constraintStart_toEndOf="@+id/btn_a"
+        app:layout_constraintEnd_toEndOf="@+id/a_x"
         app:layout_constraintTop_toBottomOf="@+id/a_x" />
 
     <Button
         android:id="@+id/btn_b"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="90dp"
         android:text="B"
-        tools:layout_editor_absoluteX="487dp"
-        tools:layout_editor_absoluteY="259dp" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_a"
+        app:layout_constraintTop_toBottomOf="@+id/btn_a" />
 
     <Button
         android:id="@+id/btn_c"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="50dp"
         android:text="C"
-        tools:layout_editor_absoluteX="433dp"
-        tools:layout_editor_absoluteY="335dp" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_b"
+        app:layout_constraintTop_toBottomOf="@+id/btn_b" />
 
     <ProgressBar
         android:id="@+id/progressBar2"

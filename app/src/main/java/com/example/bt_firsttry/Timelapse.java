@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.bt_firsttry.views.CustomView;
 
@@ -54,7 +55,10 @@ public class Timelapse extends AppCompatActivity {
     CustomView crossView;
 
     String address = null;
+    //Joystick
+    Button btn_Joystick;
     JoystickView joystickTime;
+
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
     BluetoothSocket btSocket = null;
@@ -81,6 +85,7 @@ public class Timelapse extends AppCompatActivity {
     //SeekBar
     TextView txtSpeed;
     int speed_ratio;
+
 
     class Point{
         int x_angle;
@@ -231,6 +236,30 @@ public class Timelapse extends AppCompatActivity {
 
 
 
+        });
+
+        btn_Joystick = (Button)findViewById(R.id.btn_joy);
+
+        //TODO change real Background
+        btn_Joystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                R.color.btn_on));
+        btn_Joystick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if(joystickTime.isShown()){
+                    joystickTime.setVisibility(View.GONE);
+                    crossView.setVisibility(View.GONE);
+                    btn_Joystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                            R.color.btn_off));
+                }
+                else{
+                    joystickTime.setVisibility(View.VISIBLE);
+                    crossView.setVisibility(View.VISIBLE);
+                    btn_Joystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                            R.color.btn_on));
+                }
+            }
         });
 
         //SeekBar and text
@@ -529,7 +558,7 @@ public class Timelapse extends AppCompatActivity {
     }
 
     public void sendPosition(){
-        TextView textZ = (TextView) findViewById(R.id.textViewZ);
+        TextView textZ = (TextView) findViewById(R.id.txt_btSendString);
         int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0, xSpeed = speed_ratio*10, ySpeed = speed_ratio*10;
         String xDir = "0", yDir = "0";
         xJoy = joystickTime.getNormalizedX();
