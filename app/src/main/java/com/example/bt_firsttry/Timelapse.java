@@ -85,13 +85,15 @@ public class Timelapse extends AppCompatActivity {
     //Automatic Mode Point Initialisation
     Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false, positionA = false,
     ABSet = false, ABCSet = false;
-    Button setPoint, moveToA, moveToB, setA, setB, setC;
+    Button setPoint, moveToA, moveToB, setA, setB, setC,timelapse,test;
     Point pointA, pointB, pointC, destination, position;
     TextView a_x, a_y, b_x, b_y, c_x, c_y;
+    int automaticStep;
 
     //SeekBar
     TextView txtSpeed;
     int speed_ratio;
+    int counter = 0;
 
 
     class Point{
@@ -332,8 +334,36 @@ public class Timelapse extends AppCompatActivity {
             }
         });
 
+        //Start test video capture (manual recording)
+        test = (Button)findViewById(R.id.test);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                try {
+                    startTimelapse();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
+            }
+        });
+
+        //Start automatic Mode with Timelapse Button
+        automaticStep = 0;
+        timelapse = (Button)findViewById(R.id.timelapse);
+        timelapse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    handleAutomatic();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         //Move To Point A to Initialize
         moveToA = (Button)findViewById(R.id.moveToA);
@@ -344,7 +374,7 @@ public class Timelapse extends AppCompatActivity {
                     try {
                         //startTimelapse();
                         destination = pointA;
-                        moveToPoint(pointA,1,Math.round(orientations[0]),Math.round(orientations[1]));
+                        moveToPoint(pointA,1,Math.round(orientations[0]),Math.round(orientations[1]),"a");
 
                         //Thread.sleep(4000);
                         //startTimelapse();
@@ -361,7 +391,7 @@ public class Timelapse extends AppCompatActivity {
             {
                 try {
                     destination = pointB;
-                    moveToPoint(pointB,1,Math.round(orientations[0]),Math.round(orientations[1]));
+                    moveToPoint(pointB,1,Math.round(orientations[0]),Math.round(orientations[1]),"b");
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -452,6 +482,7 @@ public class Timelapse extends AppCompatActivity {
         seekBarSpeed.setOnSeekBarChangeListener(seekBarChangeListener);
         int progress = seekBarSpeed.getProgress();
         txtSpeed.setText("Speed: " + progress);
+        automaticStep = 0;
 
     }
     @Override
@@ -540,7 +571,7 @@ public class Timelapse extends AppCompatActivity {
 
 
     public void buttonHandler() {
-        Button timelapse = (Button) findViewById(R.id.timelapse);
+        //Button timelapse = (Button) findViewById(R.id.timelapse);
         if (recording == Boolean.FALSE) {
             timelapse.setText("Timelapse Starten");
         } else {
@@ -597,7 +628,7 @@ public class Timelapse extends AppCompatActivity {
 
 
             recorder.setOutputFile(fileName);
-            recorder.setCaptureRate(24);
+            recorder.setCaptureRate(3);
             //recorder.setMaxDuration(5 * 1000);
             //recorder.setVideoSize(1920,1080);
             //recorder.setPreviewDisplay(mHolder.getSurface());
@@ -735,13 +766,12 @@ public class Timelapse extends AppCompatActivity {
     }
 
     // fast way to call Toast
-    private void msg(String s)
-    {
+    private void msg(String s) {
         Toast.makeText(Timelapse.this,s,Toast.LENGTH_LONG).show();
     }
 
     public void sendPosition(){
-                int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0, xSpeed = speed_ratio*10, ySpeed = speed_ratio*10;
+        int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0, xSpeed = speed_ratio*10, ySpeed = speed_ratio*10;
         String xDir = "0", yDir = "0";
         xJoy = joystickTime.getNormalizedX();
         yJoy = joystickTime.getNormalizedY();
@@ -764,7 +794,7 @@ public class Timelapse extends AppCompatActivity {
             yDir = "1";
         }
 
-        String msgXY =  String.format("%s%05d%04d%s%05d%04d",xDir,xSteps,xSpeed,yDir,ySteps,ySpeed);
+        String msgXY =  String.format("%s%05d%04d%s%05d%04d4",xDir,xSteps,xSpeed,yDir,ySteps,ySpeed);
        // String msgXY =  String.format("%s%05d%s%05d",xDir,xSteps,yDir,ySteps);
         //msg(msgXY);
         Log.e("Output string", msgXY);
@@ -772,6 +802,7 @@ public class Timelapse extends AppCompatActivity {
         //msg("try to send joystick position");
         BluetoothSendString(msgXY);
     }
+
     private void BluetoothSendString(String s){
         if (btSocket!=null)
         {
@@ -790,7 +821,7 @@ public class Timelapse extends AppCompatActivity {
         }
     }
 
-    public void moveToPoint(Point p, int time,int current_x_angle, int current_y_angle) throws InterruptedException {
+    public void moveToPoint(Point p, int time,int current_x_angle, int current_y_angle,String msg) throws InterruptedException {
         int delta_x = 0, delta_y = 0 , y_ratio = 111, xSteps = 0, ySteps = 0, xOutPutSteps= 0, yOutPutSteps=0; //34 and 111 steps per degree
         String xDir = "0", yDir = "0";
         float x_ratio = (float) 33.77;
@@ -821,13 +852,22 @@ public class Timelapse extends AppCompatActivity {
         }
 
         //calculate Speeds in step/s at a given time in minutes
-        xSpeed = Math.round(xSteps/(time*60));
-        ySpeed = Math.round(ySteps/(time*60));
+        if (time == 0){
+            xSpeed = 1000;
+            ySpeed = 1000;
+        }else{
+            //xSpeed = Math.round(xSteps/(time*60));
+            //ySpeed = Math.round(ySteps/(time*60));
+            xSpeed = 25;
+            ySpeed = 25;
+
+        }
+
 
 
         yOutPutSteps = ySteps;
         xOutPutSteps = xSteps;
-        String msgXY =  String.format("%s%05d%04d%s%05d%04d",xDir,xOutPutSteps,xSpeed,yDir,yOutPutSteps,ySpeed);
+        String msgXY =  String.format("%s%05d%04d%s%05d%04d%s",xDir,xOutPutSteps,xSpeed,yDir,yOutPutSteps,ySpeed,msg);
         stringsent = false;
         BluetoothSendString(msgXY);
 
@@ -873,7 +913,7 @@ public class Timelapse extends AppCompatActivity {
                                             Log.e("Input string", data);
 
                                             try {
-                                                checkError();
+                                                handleResponse(data);
                                             } catch (InterruptedException e) {
                                                 e.printStackTrace();
                                             }
@@ -899,31 +939,104 @@ public class Timelapse extends AppCompatActivity {
         workerThread.start();
     }
 
-    public void checkError() throws InterruptedException {
-        if (allPointsSet || ABSet) {
+    public void handleResponse(String data) throws InterruptedException {
+        if (automaticStep > 0){
+            try {
+                handleAutomatic();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-            moveToPoint(destination, 1, Math.round(orientations[0]), Math.round(orientations[1]));
-            position = destination;
+        else{
+            if (allPointsSet || ABSet) {
+                moveToPoint(destination, 0, Math.round(orientations[0]), Math.round(orientations[1]),"0");
+            }
         }
     }
 
 
-    public void handleAutomatic(){
+    public void handleAutomatic() throws InterruptedException, IOException {
+        switch(automaticStep){
+            case 0: {
+
+                //move to A
+                moveToPoint(pointA, 0, Math.round(orientations[0]), Math.round(orientations[1]), "1");
+                automaticStep = 1;
+                //calculate ab and bc time
 
 
-        //move to A
+                break;
+            } case 1:{
+                //error check Point A
+                moveToPoint(pointA, 0, Math.round(orientations[0]), Math.round(orientations[1]), "1");
+                automaticStep = 2;
+                break;
+            }
 
-        //calculate ab and bc time
+            case 2: {
 
-        //start recording
+                //start recording
+                startTimelapse();
+                msg("Recording started");
 
-        //move to b, speed
 
-        //move to c. speed
+                //move to b, speed
+                int ab_time = 3;
+                moveToPoint(pointB, ab_time, Math.round(orientations[0]), Math.round(orientations[1]), "2");
+                automaticStep = 3;
+                break;
+            }
 
-        //stop recording
+            case 3: {
+                //error check Point B
+                int ab_time = 3;
+                moveToPoint(pointB, ab_time, Math.round(orientations[0]), Math.round(orientations[1]), "2");
+                automaticStep = 4;
+                break;
+            }
+            case 4: {
+                //error check Point B
+                int ab_time = 3;
+                moveToPoint(pointB, ab_time, Math.round(orientations[0]), Math.round(orientations[1]), "2");
+                automaticStep = 5;
+                break;
+            }
+            case 5: {
+                //error check Point B
+                int ab_time = 3;
+                moveToPoint(pointB, ab_time, Math.round(orientations[0]), Math.round(orientations[1]), "2");
+                automaticStep = 6;
+                break;
+            }
+            case 6: {
+
+                //stop recording
+                startTimelapse();
+                msg("Recording stopped");
+
+                //reset handleAutomatic
+                automaticStep = 0;
+
+                //reset all points
+                resetPoints();
+
+                break;
+            }
+        }
+
+
+
 
     }
+    public void resetPoints(){
+        allPointsSet = false;
+        ABSet = false;
+        ABCSet = false;
+        pointA.reset();
+        pointB.reset();
+        pointC.reset();
 
+    }
 
 }
