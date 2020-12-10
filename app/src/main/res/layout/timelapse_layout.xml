@@ -302,4 +302,22 @@
         tools:layout_editor_absoluteX="216dp"
         tools:layout_editor_absoluteY="208dp" />
 
+    <EditText
+        android:id="@+id/InputMovingTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtMovingTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="44dp"
+        tools:layout_editor_absoluteY="360dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

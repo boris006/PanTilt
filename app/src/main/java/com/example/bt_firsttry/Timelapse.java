@@ -19,11 +19,14 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -59,7 +62,10 @@ public class Timelapse extends AppCompatActivity {
     //menu
     Button btn_Joystick, btn_i, btn_settings, btn_motion, btn_controls, btn_points;
     boolean iIsShown = false;
-
+    //Moving Time Input
+    TextView txtMovingTime;
+    private EditText InputMovingTime;
+    int movingtime = 60; //overall moving time in seconds (ab + bc = movingtime)//TODO moving time moved here
     //sensor
     TextView textX, textY;
     //bluetooth
@@ -180,7 +186,7 @@ public class Timelapse extends AppCompatActivity {
         pointB = new Point();
         pointC = new Point();
         //set Points A and B
-        setPoint = (Button)findViewById(R.id.setPoint);
+        //setPoint = (Button)findViewById(R.id.setPoint);
         /*setPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -468,6 +474,28 @@ public class Timelapse extends AppCompatActivity {
         seekBarSpeed.setOnSeekBarChangeListener(seekBarChangeListener);
         int progress = seekBarSpeed.getProgress();
         txtSpeed.setText("Speed: " + progress);
+
+        //Edit text Motionspeed
+        InputMovingTime = (EditText) findViewById(R.id.InputMovingTime);
+        txtMovingTime = (TextView) findViewById(R.id.txtMovingTime);
+        InputMovingTime.addTextChangedListener(new TextWatcher() {//TODO get running
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //movingtime = Integer.parseInt(InputMovingTime.getText().toString());
+                //txtMovingTime.setText(movingtime);
+
+            }
+        });
 
     }
     @Override
@@ -943,7 +971,7 @@ public class Timelapse extends AppCompatActivity {
 
     public void handleAutomatic() throws InterruptedException, IOException {
         int ab_time, bc_time; //time in seconds from a to b and from b to c
-        int movingtime = 60; //overall moving time in seconds (ab + bc = movingtime) //TODO movingtime in settings tab not hard coded here
+        //TODO movingtime in settings tab not hard coded here
 
         if (ABCSet){
             //move from a to b and c
