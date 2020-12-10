@@ -85,14 +85,14 @@ public class Timelapse extends AppCompatActivity {
     //Automatic Mode Point Initialisation
     Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false, positionA = false,
     ABSet = false, ABCSet = false;
-    Button setPoint, moveToA, moveToB, setA, setB, setC,timelapse,test;
+    Button setPoint, moveToA, moveToB, setA, setB, setC,timelapse;
     Point pointA, pointB, pointC, destination, position;
     TextView a_x, a_y, b_x, b_y, c_x, c_y;
     int automaticStep;
 
     //SeekBar
     TextView txtSpeed;
-    int speed_ratio;
+    int speed_ratio = 50;
     int counter = 0;
 
 
@@ -334,20 +334,6 @@ public class Timelapse extends AppCompatActivity {
             }
         });
 
-        //Start test video capture (manual recording)
-        test = (Button)findViewById(R.id.test);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                try {
-                    startTimelapse();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
 
         //Start automatic Mode with Timelapse Button
         automaticStep = 0;
@@ -374,7 +360,7 @@ public class Timelapse extends AppCompatActivity {
                     try {
                         //startTimelapse();
                         destination = pointA;
-                        moveToPoint(pointA,1,Math.round(orientations[0]),Math.round(orientations[1]),"a");
+                        moveToPoint(pointA,1,"a");
 
                         //Thread.sleep(4000);
                         //startTimelapse();
@@ -391,7 +377,7 @@ public class Timelapse extends AppCompatActivity {
             {
                 try {
                     destination = pointB;
-                    moveToPoint(pointB,1,Math.round(orientations[0]),Math.round(orientations[1]),"b");
+                    moveToPoint(pointB,1,"b");
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -482,7 +468,6 @@ public class Timelapse extends AppCompatActivity {
         seekBarSpeed.setOnSeekBarChangeListener(seekBarChangeListener);
         int progress = seekBarSpeed.getProgress();
         txtSpeed.setText("Speed: " + progress);
-        automaticStep = 0;
 
     }
     @Override
@@ -821,13 +806,13 @@ public class Timelapse extends AppCompatActivity {
         }
     }
 
-    public void moveToPoint(Point p, int time,int current_x_angle, int current_y_angle,String msg) throws InterruptedException {
+    public void moveToPoint(Point p, int time,String msg) throws InterruptedException {
         int delta_x = 0, delta_y = 0 , y_ratio = 111, xSteps = 0, ySteps = 0, xOutPutSteps= 0, yOutPutSteps=0; //34 and 111 steps per degree
         String xDir = "0", yDir = "0";
         float x_ratio = (float) 33.77;
         int xSpeed, ySpeed = 0;
-        //int current_x_angle = Math.round(orientations[0]); //current orientations
-        //int current_y_angle = Math.round(orientations[1]);
+        int current_x_angle = Math.round(orientations[0]); //current orientations
+        int current_y_angle = Math.round(orientations[1]);
 
 
         //get delta of orientations
@@ -851,19 +836,19 @@ public class Timelapse extends AppCompatActivity {
             yDir = "1";
         }
 
-        //calculate Speeds in step/s at a given time in minutes
+        //calculate Speeds in step/s at a given time in seconds
         if (time == 0){
+            //as fast as possible
             xSpeed = 1000;
             ySpeed = 1000;
         }else{
-            //xSpeed = Math.round(xSteps/(time*60));
-            //ySpeed = Math.round(ySteps/(time*60));
-            xSpeed = 25;
-            ySpeed = 25;
+            //speed according to range of steps and available time
+            xSpeed = Math.round(xSteps/time);
+            ySpeed = Math.round(ySteps/time);
+            //xSpeed = 25;
+            //ySpeed = 25;
 
         }
-
-
 
         yOutPutSteps = ySteps;
         xOutPutSteps = xSteps;
@@ -950,26 +935,36 @@ public class Timelapse extends AppCompatActivity {
 
         else{
             if (allPointsSet || ABSet) {
-                moveToPoint(destination, 0, Math.round(orientations[0]), Math.round(orientations[1]),"0");
+                moveToPoint(destination, 0, "0");
             }
         }
     }
 
 
     public void handleAutomatic() throws InterruptedException, IOException {
+        int ab_time, bc_time; //time in seconds from a to b and from b to c
+        int movingtime = 60; //overall moving time in seconds (ab + bc = movingtime) //TODO movingtime in settings tab not hard coded here
+
+        if (ABCSet){
+            //move from a to b and c
+            ab_time = Math.round((speed_ratio*movingtime)/100);
+            bc_time = movingtime - ab_time;
+        }else{
+            //move from a to b
+            ab_time = movingtime;
+            bc_time = 0;
+        }
         switch(automaticStep){
             case 0: {
-
                 //move to A
-                moveToPoint(pointA, 0, Math.round(orientations[0]), Math.round(orientations[1]), "1");
+                moveToPoint(pointA, 0, "1");
                 automaticStep = 1;
                 //calculate ab and bc time
-
 
                 break;
             } case 1:{
                 //error check Point A
-                moveToPoint(pointA, 0, Math.round(orientations[0]), Math.round(orientations[1]), "1");
+                moveToPoint(pointA, 0, "1");
                 automaticStep = 2;
                 break;
             }
@@ -982,34 +977,63 @@ public class Timelapse extends AppCompatActivity {
 
 
                 //move to b, speed
-                int ab_time = 3;
-                moveToPoint(pointB, ab_time, Math.round(orientations[0]), Math.round(orientations[1]), "2");
+                moveToPoint(pointB, ab_time, "2");
                 automaticStep = 3;
                 break;
             }
 
             case 3: {
                 //error check Point B
-                int ab_time = 3;
-                moveToPoint(pointB, ab_time, Math.round(orientations[0]), Math.round(orientations[1]), "2");
+
+                moveToPoint(pointB, ab_time, "2");
                 automaticStep = 4;
                 break;
             }
             case 4: {
                 //error check Point B
-                int ab_time = 3;
-                moveToPoint(pointB, ab_time, Math.round(orientations[0]), Math.round(orientations[1]), "2");
+
+                moveToPoint(pointB, ab_time,"2");
                 automaticStep = 5;
                 break;
             }
             case 5: {
                 //error check Point B
-                int ab_time = 3;
-                moveToPoint(pointB, ab_time, Math.round(orientations[0]), Math.round(orientations[1]), "2");
-                automaticStep = 6;
+
+                moveToPoint(pointB, ab_time,"2");
+                if (ABCSet){
+                    //move to point C
+                    automaticStep = 6;
+                }else{
+                    //stop recording
+                    automaticStep = 9;
+                }
                 break;
             }
             case 6: {
+                //move to point C
+
+                moveToPoint(pointC, bc_time,"2");
+                automaticStep = 7;
+                break;
+            }
+            case 7: {
+                //error check Point  C
+
+                moveToPoint(pointC, 0,"2");
+                automaticStep = 9;
+                break;
+            }
+
+//            case 8: {
+//                //error check Point  C
+//
+//                moveToPoint(pointC, bc_time, "3");
+//                automaticStep = 9;
+//                break;
+//            }
+
+
+            case 9: {
 
                 //stop recording
                 startTimelapse();
@@ -1038,5 +1062,18 @@ public class Timelapse extends AppCompatActivity {
         pointC.reset();
 
     }
+
+    public void times(){
+        //TODO calculate time between automatic steps to know how much time is left --> set speed accordingly
+
+        SimpleDateFormat format = new SimpleDateFormat("ss");
+        Date startTime = new Date();
+        Date endTime = new Date();
+
+
+        //long mills = startTime.getTime() - endTime.getTime();
+        //int hours = millis/(1000 * 60 * 60);
+    }
+
 
 }
