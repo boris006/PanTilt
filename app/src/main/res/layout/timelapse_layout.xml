@@ -50,26 +50,6 @@
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/b_x"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#1D171F"
-        android:text="TextView"
-        android:textColor="#E8E3E3"
-        app:layout_constraintEnd_toStartOf="@+id/btn_b"
-        app:layout_constraintTop_toTopOf="@+id/btn_b" />
-
-    <TextView
-        android:id="@+id/b_y"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#1D171F"
-        android:text="TextView"
-        android:textColor="#FFFFFF"
-        app:layout_constraintStart_toStartOf="@+id/b_x"
-        app:layout_constraintTop_toBottomOf="@+id/b_x" />
-
     <view
         android:id="@+id/joystickCamera"
         class="io.github.controlwear.virtual.joystick.android.JoystickView"
@@ -91,46 +71,6 @@
         android:text="A"
         app:layout_constraintBottom_toTopOf="@+id/timelapse"
         app:layout_constraintEnd_toEndOf="@+id/timelapse" />
-
-    <TextView
-        android:id="@+id/c_y"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#1D171F"
-        android:text="TextView"
-        android:textColor="#E8E3E3"
-        app:layout_constraintEnd_toEndOf="@+id/c_x"
-        app:layout_constraintTop_toBottomOf="@+id/c_x" />
-
-    <TextView
-        android:id="@+id/c_x"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#1D171F"
-        android:text="TextView"
-        android:textColor="#E8E3E3"
-        app:layout_constraintEnd_toStartOf="@+id/btn_c"
-        app:layout_constraintTop_toTopOf="@+id/btn_c" />
-
-    <TextView
-        android:id="@+id/a_x"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#E8E3E3"
-        android:text="TextView"
-        android:textColor="#E8E3E3"
-        app:layout_constraintEnd_toStartOf="@+id/btn_a"
-        app:layout_constraintTop_toTopOf="@+id/btn_a" />
-
-    <TextView
-        android:id="@+id/a_y"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#1D171F"
-        android:text="TextView"
-        android:textColor="#E8E3E3"
-        app:layout_constraintEnd_toEndOf="@+id/a_x"
-        app:layout_constraintTop_toBottomOf="@+id/a_x" />
 
     <Button
         android:id="@+id/btn_b"
@@ -172,6 +112,15 @@
             android:layout_marginEnd="10dp"
             android:checked="true"/>
 
+        <TextView
+            android:id="@+id/txtMovingSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5sp"
+            android:text="TextView"
+            android:textColor="#FFE8E3E3" />
+
         <SeekBar
             android:id="@+id/sBMovingTime"
             style="@style/Widget.AppCompat.SeekBar.Discrete"
@@ -180,14 +129,6 @@
             android:max="10"
             android:progress="3" />
 
-        <TextView
-            android:id="@+id/txtMovingSpeed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="TextView"
-            android:textColor="#FFE8E3E3"
-            android:layout_marginBottom="5sp"/>
     </LinearLayout>
 
     <ProgressBar
@@ -300,7 +241,8 @@
                 android:text="TextView"
                 android:textColor="#E8E3E3"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="5sp"/>
+                android:layout_marginTop="5sp"
+                android:layout_marginEnd="5sp"/>
 
         </LinearLayout>
 
@@ -319,8 +261,100 @@
             android:text="TextView"
             android:textColor="#E8E3E3"
             android:layout_marginStart="5dp"
-            android:layout_marginBottom="5dp
-"/>
+            android:layout_marginBottom="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layInfoA"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/menu_settings_background"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_a"
+        app:layout_constraintEnd_toStartOf="@+id/btn_a"
+        app:layout_constraintTop_toTopOf="@+id/btn_a">
+
+        <TextView
+            android:id="@+id/a_x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:layout_marginTop="3sp"
+            android:layout_marginEnd="5sp"
+            android:text="TextView"
+            android:textColor="#E8E3E3" />
+
+        <TextView
+            android:id="@+id/a_y"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:layout_marginEnd="5sp"
+            android:layout_marginBottom="3sp"
+            android:text="TextView"
+            android:textColor="#E8E3E3" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layInfoB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/menu_settings_background"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_b"
+        app:layout_constraintEnd_toStartOf="@+id/btn_b"
+        app:layout_constraintTop_toTopOf="@+id/btn_b">
+
+        <TextView
+            android:id="@+id/b_x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:layout_marginTop="3sp"
+            android:layout_marginEnd="5sp"
+            android:text="TextView"
+            android:textColor="#E8E3E3" />
+
+        <TextView
+            android:id="@+id/b_y"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:layout_marginEnd="5sp"
+            android:layout_marginBottom="3sp"
+            android:text="TextView"
+            android:textColor="#E8E3E3" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layInfoC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/menu_settings_background"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_c"
+        app:layout_constraintEnd_toStartOf="@+id/btn_c"
+        app:layout_constraintTop_toTopOf="@+id/btn_c">
+
+        <TextView
+            android:id="@+id/c_x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:layout_marginTop="3sp"
+            android:layout_marginEnd="5sp"
+            android:text="TextView"
+            android:textColor="#E8E3E3" />
+
+        <TextView
+            android:id="@+id/c_y"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:layout_marginEnd="5sp"
+            android:layout_marginBottom="3sp"
+            android:text="TextView"
+            android:textColor="#E8E3E3" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -619,7 +619,6 @@ public class Timelapse extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBarSpeed, int progress, boolean fromUser) {
             // updated continuously as the user slides the thumb
-            txtMovingTime.setText("Speed: " + progress);
             setMovingTime(progress);
         }
 
@@ -828,47 +827,47 @@ public class Timelapse extends AppCompatActivity {
         switch(progress){
             case 0:{//10sec
                 movingtime = 10;
-                txtMovingTime.setText("Time: 10s");
+                txtMovingTime.setText("Capture Time:10s");
                 break;
             } case 1:{//30s
                 movingtime = 30;
-                txtMovingTime.setText("Time: 30s");
+                txtMovingTime.setText("Capture Time: 30s");
                 break;
             }case 2:{//1min
                 movingtime = 60;
-                txtMovingTime.setText("Time: 1min");
+                txtMovingTime.setText("Capture Time: 1min");
                 break;
             }case 3:{//3min
                 movingtime = 180;
-                txtMovingTime.setText("Time: 3min");
+                txtMovingTime.setText("Capture Time: 3min");
                 break;
             }case 4:{//10min
                 movingtime = 600;
-                txtMovingTime.setText("Time: 10min");
+                txtMovingTime.setText("Capture Time: 10min");
                 break;
             }case 5:{//20min
                 movingtime = 1200;
-                txtMovingTime.setText("Time: 20min");
+                txtMovingTime.setText("Capture Time: 20min");
                 break;
             }case 6: {//40min
                 movingtime = 2400;
-                txtMovingTime.setText("Time: 40min");
+                txtMovingTime.setText("Capture Time: 40min");
                 break;
             }case 7:{//1h
                 movingtime = 3600;
-                txtMovingTime.setText("Time: 1h");
+                txtMovingTime.setText("Capture Time: 1h");
                 break;
             }case 8:{//1,5h
                 movingtime = 5400;
-                txtMovingTime.setText("Time: 1.5h");
+                txtMovingTime.setText("Capture Time: 1.5h");
                 break;
             }case 9:{//2h
                 movingtime = 7200;
-                txtMovingTime.setText("Time: 2h");
+                txtMovingTime.setText("Capture Time: 2h");
                 break;
             }case 10:{//2,5h
                 movingtime = 9000;
-                txtMovingTime.setText("Time: 2.5h");
+                txtMovingTime.setText("Capture Time: 2.5h");
                 break;
             }
         }
@@ -972,7 +971,7 @@ public class Timelapse extends AppCompatActivity {
        // String msgXY =  String.format("%s%05d%s%05d",xDir,xSteps,yDir,ySteps);
         //msg(msgXY);
         Log.e("Output string", msgXY);
-        textBtOutput.setText("O:" + msgXY);
+        textBtOutput.setText("Out:" + msgXY);
         //msg("try to send joystick position");
         BluetoothSendString(msgXY);
     }
@@ -985,7 +984,7 @@ public class Timelapse extends AppCompatActivity {
 
                 btSocket.getOutputStream().write(s.getBytes());
                 Log.e("bluetooth string", s);
-                textBtOutput.setText("O:" + s);
+                textBtOutput.setText("Out:" + s);
                 stringsent = true;
             }
             catch (IOException e)
@@ -1083,7 +1082,7 @@ public class Timelapse extends AppCompatActivity {
                                     handlerInput.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            textBtInput.setText(data);
+                                            textBtInput.setText("In:" + data);
                                             Log.e("Input string", data);
 
                                             try {
