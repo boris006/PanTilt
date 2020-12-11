@@ -20,14 +20,15 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -363,7 +364,7 @@ public class Timelapse extends AppCompatActivity {
             }
         });
 
-        //Move To Point A to Initialize
+        //Move To Point A
         moveToA = (Button)findViewById(R.id.moveToA);
         moveToA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -381,7 +382,7 @@ public class Timelapse extends AppCompatActivity {
                     }
             }
         });
-
+        //Move to Point B
         moveToB = (Button)findViewById(R.id.moveToB);
         moveToB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -396,7 +397,7 @@ public class Timelapse extends AppCompatActivity {
                 }
             }
         });
-
+        //move to Point C
         moveToC = (Button)findViewById(R.id.moveToC);
         moveToC.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -518,6 +519,8 @@ public class Timelapse extends AppCompatActivity {
 
             }
         });*/
+
+        //Switch for Timelapse Capture rate
         SwitchCapture = (SwitchCompat) findViewById(R.id.switchCapture);
         SwitchCapture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -527,9 +530,18 @@ public class Timelapse extends AppCompatActivity {
                     captureMode = 3;
                     Log.e("Switch","Timelapse on");
                 }else{
-                    captureMode = 24;
+                    captureMode = 24;//TODO put real rate
                     Log.e("Switch","Timelapse off");
                 }
+            }
+        });
+
+        //Setting menu
+        btn_motion = (Button) findViewById(R.id.btn_motion);
+        btn_motion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMotionMenu(v);
             }
         });
 
@@ -606,23 +618,45 @@ public class Timelapse extends AppCompatActivity {
         }
     };
 
-    /*SeekBar.OnSeekBarChangeListener seekBarChangeListener1 = new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onProgressChanged(SeekBar sBMovingTime, int progress, boolean fromUser) {
+    private void showMotionMenu(View v){
+        PopupMenu settingsMenu = new PopupMenu(Timelapse.this,v);
+        settingsMenu.getMenuInflater().inflate(R.menu.motionmenu,settingsMenu.getMenu());
+        settingsMenu.show();
+        settingsMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId() == R.id.menuToA){
+                    try {
+                        destination = pointA;
+                        moveToPoint(pointA,1,"a");
+                        Log.e("Move","a");
 
-            movingtime = progress;
-        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(item.getItemId() == R.id.menuToB){
+                    try {
+                        destination = pointB;
+                        moveToPoint(pointB,1,"b");
 
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(item.getItemId() == R.id.menuToC){
+                    try {
+                        destination = pointC;
+                        moveToPoint(pointC,1,"c");
 
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-
-        }
-    };*/
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return true;
+            }
+        });
+    }
 
     private String getOutputVideoFilePath() {
         // Create a media file name
