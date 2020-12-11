@@ -19,20 +19,20 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.bt_firsttry.views.CustomView;
@@ -49,6 +49,7 @@ import io.github.controlwear.virtual.joystick.android.JoystickView;
 //TODO camera focus
 //TODO preview mit buttons [xdir][###][ydir][###]
 public class Timelapse extends AppCompatActivity {
+    //Camera and Timelapse
     Camera camera;
     FrameLayout frameLayout; //for camera preview
     SurfaceView mSurfaceView; //for preview while recording timelapse
@@ -56,18 +57,20 @@ public class Timelapse extends AppCompatActivity {
     ShowCamera showCamera; //Class for camera preview on framelayout
     MediaRecorder recorder;
     CustomView crossView;
+    int captureMode;
+    SwitchCompat SwitchCapture;
 
     //Joystick
     JoystickView joystickTime;
     //menu
     Button btn_Joystick, btn_i, btn_settings, btn_motion, btn_controls, btn_points;
     boolean iIsShown = false;
-    //Moving Time Input
-    TextView txtMovingTime;
-    private EditText InputMovingTime;
-    int movingtime = 60; //overall moving time in seconds (ab + bc = movingtime)//TODO moving time moved here
+
+
+
     //sensor
     TextView textX, textY;
+
     //bluetooth
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
@@ -76,9 +79,11 @@ public class Timelapse extends AppCompatActivity {
     float[] orientations = new float[3]; //orientation 1 tilt sensor
     int i = 0;
     Boolean recording = Boolean.FALSE;
+
     //set UUID
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     String address = null;
+
     //TextView BT Inputstream;
     InputStream mmInputStream;
     TextView textBtOutput, textBtInput;
@@ -91,15 +96,16 @@ public class Timelapse extends AppCompatActivity {
     //Automatic Mode Point Initialisation
     Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false, positionA = false,
     ABSet = false, ABCSet = false;
-    Button setPoint, moveToA, moveToB, setA, setB, setC,timelapse;
+    Button setPoint, moveToA, moveToB, moveToC, setA, setB, setC,timelapse;
     Point pointA, pointB, pointC, destination, position;
     TextView a_x, a_y, b_x, b_y, c_x, c_y;
     int automaticStep;
 
-    //SeekBar
-    TextView txtSpeed;
+    //SeekBar Speed Moving Time
+    TextView txtMovingTime;
     int speed_ratio = 50;
     int counter = 0;
+    int movingtime = 60;     //overall moving time in seconds (ab + bc = movingtime)//TODO moving time moved here
 
 
     class Point{
@@ -391,6 +397,21 @@ public class Timelapse extends AppCompatActivity {
             }
         });
 
+        moveToC = (Button)findViewById(R.id.moveToC);
+        moveToC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                try {
+                    destination = pointC;
+                    moveToPoint(pointC,1,"c");
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         btn_Joystick = (Button)findViewById(R.id.btn_joy);
 
         //TODO change real Background
@@ -469,14 +490,15 @@ public class Timelapse extends AppCompatActivity {
         });
 
         //SeekBar and text
-        txtSpeed = (TextView) findViewById(R.id.textViewSpeed);
-        SeekBar seekBarSpeed = findViewById(R.id.seekBarSpeed);
-        seekBarSpeed.setOnSeekBarChangeListener(seekBarChangeListener);
-        int progress = seekBarSpeed.getProgress();
-        txtSpeed.setText("Speed: " + progress);
+        txtMovingTime = (TextView) findViewById(R.id.txtMovingSpeed);
+        SeekBar sBMovingTime = findViewById(R.id.sBMovingTime);
+        sBMovingTime.setOnSeekBarChangeListener(seekBarChangeListener);
+       //sBMovingTime.setOnSeekBarChangeListener(seekBarChangeListener1);
+        int progress = sBMovingTime.getProgress();
+        setMovingTime(3);
 
         //Edit text Motionspeed
-        InputMovingTime = (EditText) findViewById(R.id.InputMovingTime);
+        /*InputMovingTime = (EditText) findViewById(R.id.InputMovingTime);
         txtMovingTime = (TextView) findViewById(R.id.txtMovingTime);
         InputMovingTime.addTextChangedListener(new TextWatcher() {//TODO get running
             @Override
@@ -494,6 +516,20 @@ public class Timelapse extends AppCompatActivity {
                 //movingtime = Integer.parseInt(InputMovingTime.getText().toString());
                 //txtMovingTime.setText(movingtime);
 
+            }
+        });*/
+        SwitchCapture = (SwitchCompat) findViewById(R.id.switchCapture);
+        SwitchCapture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // do something, the isChecked will be
+                // true if the switch is in the On position
+                if(isChecked){
+                    captureMode = 3;
+                    Log.e("Switch","Timelapse on");
+                }else{
+                    captureMode = 24;
+                    Log.e("Switch","Timelapse off");
+                }
             }
         });
 
@@ -555,8 +591,8 @@ public class Timelapse extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBarSpeed, int progress, boolean fromUser) {
             // updated continuously as the user slides the thumb
-            txtSpeed.setText("Speed: " + progress);
-            speed_ratio = progress;
+            txtMovingTime.setText("Speed: " + progress);
+            setMovingTime(progress);
         }
 
         @Override
@@ -569,6 +605,24 @@ public class Timelapse extends AppCompatActivity {
             // called after the user finishes moving the SeekBar
         }
     };
+
+    /*SeekBar.OnSeekBarChangeListener seekBarChangeListener1 = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar sBMovingTime, int progress, boolean fromUser) {
+
+            movingtime = progress;
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };*/
 
     private String getOutputVideoFilePath() {
         // Create a media file name
@@ -711,6 +765,56 @@ public class Timelapse extends AppCompatActivity {
             }
         };
         sensorManager.registerListener(rotListener,rotSensor,SensorManager.SENSOR_DELAY_UI);
+    }
+
+    public void setMovingTime(int progress){
+        switch(progress){
+            case 0:{//10sec
+                movingtime = 10;
+                txtMovingTime.setText("Time: 10s");
+                break;
+            } case 1:{//30s
+                movingtime = 30;
+                txtMovingTime.setText("Time: 30s");
+                break;
+            }case 2:{//1min
+                movingtime = 60;
+                txtMovingTime.setText("Time: 1min");
+                break;
+            }case 3:{//3min
+                movingtime = 180;
+                txtMovingTime.setText("Time: 3min");
+                break;
+            }case 4:{//10min
+                movingtime = 600;
+                txtMovingTime.setText("Time: 10min");
+                break;
+            }case 5:{//20min
+                movingtime = 1200;
+                txtMovingTime.setText("Time: 20min");
+                break;
+            }case 6: {//40min
+                movingtime = 2400;
+                txtMovingTime.setText("Time: 40min");
+                break;
+            }case 7:{//1h
+                movingtime = 3600;
+                txtMovingTime.setText("Time: 1h");
+                break;
+            }case 8:{//1,5h
+                movingtime = 5400;
+                txtMovingTime.setText("Time: 1.5h");
+                break;
+            }case 9:{//2h
+                movingtime = 7200;
+                txtMovingTime.setText("Time: 2h");
+                break;
+            }case 10:{//2,5h
+                movingtime = 9000;
+                txtMovingTime.setText("Time: 2.5h");
+                break;
+            }
+        }
     }
 
 
