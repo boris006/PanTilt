@@ -8,13 +8,22 @@
     android:scrollbarSize="10sp"
     tools:context=".Timelapse">
 
+    <view
+        android:id="@+id/CustomView"
+        class="com.example.bt_firsttry.views.CustomView"
+        android:layout_width="731dp"
+        android:layout_height="412dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/timelapse"
         android:layout_width="76dp"
         android:layout_height="68dp"
         android:layout_marginBottom="16dp"
         android:background="#1D171F"
-        android:text="Timelapse Starten"
+        android:text="Start\nTimelapse"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,23 +51,12 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/textViewX"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="196dp"
-        android:background="#1D171F"
-        android:text="TextView"
-        android:textColor="#FFFFFF"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/b_x"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#1D171F"
         android:text="TextView"
-        android:textColor="#FFFFFF"
+        android:textColor="#E8E3E3"
         app:layout_constraintEnd_toStartOf="@+id/btn_b"
         app:layout_constraintTop_toTopOf="@+id/btn_b" />
 
@@ -71,27 +69,6 @@
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="@+id/b_x"
         app:layout_constraintTop_toBottomOf="@+id/b_x" />
-
-    <TextView
-        android:id="@+id/textViewY"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#1D171F"
-        android:text="TextView"
-        android:textColor="#FFFFFF"
-        app:layout_constraintStart_toStartOf="@+id/textViewX"
-        app:layout_constraintTop_toBottomOf="@+id/textViewX" />
-
-    <TextView
-        android:id="@+id/txt_btSendString"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:background="#1D171F"
-        android:text="TextView"
-        android:textColor="#FFFFFF"
-        app:layout_constraintStart_toEndOf="@+id/textViewX"
-        app:layout_constraintTop_toTopOf="@+id/textViewX" />
 
     <view
         android:id="@+id/joystickCamera"
@@ -107,95 +84,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/moveToA"
-        android:layout_width="123dp"
-        android:layout_height="84dp"
-        android:layout_marginStart="128dp"
-        android:layout_marginTop="84dp"
-        android:text="Bewege zu A"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="invisible" />
-
-    <Button
-        android:id="@+id/moveToB"
-        android:layout_width="123dp"
-        android:layout_height="84dp"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="332dp"
-        android:text="Bewege zu B"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="invisible" />
-
-    <TextView
-        android:id="@+id/textViewData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#1D171F"
-        android:text="TextView"
-        android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="@+id/txt_btSendString"
-        app:layout_constraintTop_toBottomOf="@+id/txt_btSendString" />
-
-    <TextView
-        android:id="@+id/txtMovingSpeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#1D171F"
-        android:text="TextView"
-        android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="@+id/sBMovingTime"
-        app:layout_constraintStart_toStartOf="@+id/sBMovingTime"
-        app:layout_constraintTop_toBottomOf="@+id/sBMovingTime" />
-
-    <Button
-        android:id="@+id/btn_i"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="i"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@+id/btn_settings"
-        app:layout_constraintTop_toBottomOf="@+id/btn_settings" />
-
-    <Button
-        android:id="@+id/btn_joy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Joy"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@+id/btn_i"
-        app:layout_constraintTop_toBottomOf="@+id/btn_i" />
-
-    <Button
-        android:id="@+id/btn_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Settings"
-        android:textAllCaps="false"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_motion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:text="Motion"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@+id/btn_joy"
-        app:layout_constraintTop_toBottomOf="@+id/btn_joy" />
-
-    <Button
-        android:id="@+id/btn_block"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Block"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@+id/btn_motion"
-        app:layout_constraintTop_toBottomOf="@+id/btn_motion" />
-
-    <Button
         android:id="@+id/btn_a"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -204,33 +92,13 @@
         app:layout_constraintBottom_toTopOf="@+id/timelapse"
         app:layout_constraintEnd_toEndOf="@+id/timelapse" />
 
-    <view
-        android:id="@+id/CustomView"
-        class="com.example.bt_firsttry.views.CustomView"
-        android:layout_width="731dp"
-        android:layout_height="412dp"
-        android:background="#00FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/moveToC"
-        android:layout_width="123dp"
-        android:layout_height="84dp"
-        android:layout_marginStart="428dp"
-        android:layout_marginTop="84dp"
-        android:text="Bewege zu C"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="invisible" />
-
     <TextView
         android:id="@+id/c_y"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#1D171F"
         android:text="TextView"
-        android:textColor="#FFFFFF"
+        android:textColor="#E8E3E3"
         app:layout_constraintEnd_toEndOf="@+id/c_x"
         app:layout_constraintTop_toBottomOf="@+id/c_x" />
 
@@ -240,7 +108,7 @@
         android:layout_height="wrap_content"
         android:background="#1D171F"
         android:text="TextView"
-        android:textColor="#FFFFFF"
+        android:textColor="#E8E3E3"
         app:layout_constraintEnd_toStartOf="@+id/btn_c"
         app:layout_constraintTop_toTopOf="@+id/btn_c" />
 
@@ -248,9 +116,9 @@
         android:id="@+id/a_x"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#1D171F"
+        android:background="#E8E3E3"
         android:text="TextView"
-        android:textColor="#FFFFFF"
+        android:textColor="#E8E3E3"
         app:layout_constraintEnd_toStartOf="@+id/btn_a"
         app:layout_constraintTop_toTopOf="@+id/btn_a" />
 
@@ -260,7 +128,7 @@
         android:layout_height="wrap_content"
         android:background="#1D171F"
         android:text="TextView"
-        android:textColor="#FFFFFF"
+        android:textColor="#E8E3E3"
         app:layout_constraintEnd_toEndOf="@+id/a_x"
         app:layout_constraintTop_toBottomOf="@+id/a_x" />
 
@@ -284,6 +152,44 @@
         app:layout_constraintEnd_toEndOf="@+id/btn_b"
         app:layout_constraintTop_toBottomOf="@+id/btn_b" />
 
+    <LinearLayout
+        android:id="@+id/menuSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/menu_settings_background"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@+id/menuBar"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <view
+            android:id="@+id/switchCapture"
+            class="androidx.appcompat.widget.SwitchCompat"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Enable\nTimelapse"
+            android:textColor="#E8E3E3"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:checked="true"/>
+
+        <SeekBar
+            android:id="@+id/sBMovingTime"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="141dp"
+            android:layout_height="34dp"
+            android:max="10"
+            android:progress="3" />
+
+        <TextView
+            android:id="@+id/txtMovingSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="TextView"
+            android:textColor="#FFE8E3E3"
+            android:layout_marginBottom="5sp"/>
+    </LinearLayout>
+
     <ProgressBar
         android:id="@+id/progressBar2"
         style="?android:attr/progressBarStyleHorizontal"
@@ -294,25 +200,127 @@
         app:layout_constraintBottom_toBottomOf="@+id/CustomView"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <SeekBar
-        android:id="@+id/sBMovingTime"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="141dp"
-        android:layout_height="22dp"
-        android:layout_marginStart="88dp"
-        android:layout_marginBottom="60dp"
-        android:max="10"
-        android:progress="3"
+    <LinearLayout
+        android:id="@+id/menuBar"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@drawable/menu_settings_background"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <view
-        android:id="@+id/switchCapture"
-        class="androidx.appcompat.widget.SwitchCompat"
-        android:layout_width="137dp"
-        android:layout_height="53dp"
-        android:text="Enable\nTimelapse"
-        app:layout_constraintBottom_toTopOf="@+id/sBMovingTime"
-        app:layout_constraintStart_toStartOf="@+id/sBMovingTime" />
+        <Button
+            android:id="@+id/btn_i"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="15sp"
+            android:layout_marginTop="28sp"
+            android:layout_marginEnd="15sp"
+            android:layout_marginBottom="15sp"
+            android:background="@drawable/info_icon_white"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btn_settings"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="15sp"
+            android:layout_marginTop="18sp"
+            android:layout_marginEnd="15sp"
+            android:layout_marginBottom="15sp"
+            android:background="@drawable/settings_icon_whit"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btn_motion"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@drawable/motion_icon_white"
+            android:textAllCaps="false"
+            android:layout_marginTop="18sp"
+            android:layout_marginBottom="15sp"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="15sp"/>
+
+        <Button
+            android:id="@+id/btn_joy"
+            android:layout_width="43dp"
+            android:layout_height="38dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="15sp"
+            android:layout_marginTop="18sp"
+            android:layout_marginEnd="15sp"
+            android:layout_marginBottom="15sp"
+            android:background="@drawable/joy_icon_white"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btn_block"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@drawable/block_icon_white"
+            android:textAllCaps="false"
+            android:layout_marginTop="18sp"
+            android:layout_marginBottom="15sp"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="15sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lay_info_vert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/menu_settings_background"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@+id/menuSettings"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textViewX"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="#E8E3E3"
+                android:layout_marginStart="5sp"
+                android:layout_marginTop="5sp"/>
+
+            <TextView
+                android:id="@+id/textViewY"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="#E8E3E3"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5sp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="#E8E3E3"
+            android:layout_marginStart="5dp"/>
+
+        <TextView
+            android:id="@+id/txt_btSendString"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="#E8E3E3"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp
+"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -62,12 +63,12 @@ public class Timelapse extends AppCompatActivity {
     SwitchCompat SwitchCapture;
 
     //Joystick
-    JoystickView joystickTime;
+    JoystickView joystickPan;
+
     //menu
-    Button btn_Joystick, btn_i, btn_settings, btn_motion, btn_controls, btn_points;
-    boolean iIsShown = false;
-
-
+    Button btnJoystick, btn_i, btnSettings, btnMotion, btnBlock;
+    boolean iIsShown = false, settingsIsShown = false, isBlocked = false;
+    LinearLayout menuSettings, menuBar;
 
     //sensor
     TextView textX, textY;
@@ -97,7 +98,7 @@ public class Timelapse extends AppCompatActivity {
     //Automatic Mode Point Initialisation
     Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false, positionA = false,
     ABSet = false, ABCSet = false;
-    Button setPoint, moveToA, moveToB, moveToC, setA, setB, setC,timelapse;
+    Button setPoint, btnA, btnB, btnC,timelapse;
     Point pointA, pointB, pointC, destination, position;
     TextView a_x, a_y, b_x, b_y, c_x, c_y;
     int automaticStep;
@@ -169,13 +170,13 @@ public class Timelapse extends AppCompatActivity {
 
         //create Joystick
         crossView = (CustomView) findViewById(R.id.CustomView);
-        joystickTime = (JoystickView) findViewById(R.id.joystickCamera);
+        joystickPan = (JoystickView) findViewById(R.id.joystickCamera);
         Log.e("state","on create before joystick");
-        joystickTime.setOnMoveListener(new JoystickView.OnMoveListener() {
+        joystickPan.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
 
-                crossView.adjustCross(joystickTime.getNormalizedX(),joystickTime.getNormalizedY());
+                crossView.adjustCross(joystickPan.getNormalizedX(), joystickPan.getNormalizedY());
                 sendPosition();
 
             }
@@ -229,14 +230,14 @@ public class Timelapse extends AppCompatActivity {
             }
         });*/
         //set and reset A
-        setA = (Button)findViewById(R.id.btn_a);
+        btnA = (Button)findViewById(R.id.btn_a);
         a_x = (TextView) findViewById(R.id.a_x);
         a_y = (TextView) findViewById(R.id.a_y);
         a_x.setText("X_a: N/S");
         a_y.setText("X_a: N/S");
-        setA.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+        btnA.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
                 R.color.btn_off));
-        setA.setOnClickListener(new View.OnClickListener() {
+        btnA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!pointA.isSet){
@@ -244,7 +245,7 @@ public class Timelapse extends AppCompatActivity {
                     a_x.setText("X_a:" + pointA.x_angle);
                     a_y.setText("X_a:" + pointA.y_angle);
                     pointA.name = "A";
-                    setA.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                    btnA.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
                             R.color.btn_on));
                     if(pointA.isSet && pointB.isSet){
                         ABSet = true;
@@ -255,7 +256,7 @@ public class Timelapse extends AppCompatActivity {
                 }
             }
         });
-        setA.setOnLongClickListener(new View.OnLongClickListener() {
+        btnA.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 pointA.reset();
@@ -263,21 +264,21 @@ public class Timelapse extends AppCompatActivity {
                 a_y.setText("X_a: N/S");
                 ABSet = false;
                 ABCSet = false;
-                setA.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                btnA.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
                         R.color.btn_off));
                 return true;
             }
         });
 
         //set and reset B
-        setB = (Button)findViewById(R.id.btn_b);
+        btnB = (Button)findViewById(R.id.btn_b);
         b_x = (TextView) findViewById(R.id.b_x);
         b_y = (TextView) findViewById(R.id.b_y);
         b_x.setText("X_b: N/S");
         b_y.setText("X_b: N/S");
-        setB.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+        btnB.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
                 R.color.btn_off));
-        setB.setOnClickListener(new View.OnClickListener() {
+        btnB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!pointB.isSet){
@@ -285,7 +286,7 @@ public class Timelapse extends AppCompatActivity {
                     b_x.setText("X_b:" + pointB.x_angle);
                     b_y.setText("X_b:" + pointB.y_angle);
                     pointB.name = "C";
-                    setB.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                    btnB.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
                             R.color.btn_on));
                     if(pointA.isSet && pointB.isSet){
                         ABSet = true;
@@ -296,7 +297,7 @@ public class Timelapse extends AppCompatActivity {
                 }
             }
         });
-        setB.setOnLongClickListener(new View.OnLongClickListener() {
+        btnB.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 pointB.reset();
@@ -304,21 +305,21 @@ public class Timelapse extends AppCompatActivity {
                 b_y.setText("X_b: N/S");
                 ABSet = false;
                 ABCSet = false;
-                setB.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                btnB.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
                         R.color.btn_off));
                 return true;
             }
         });
 
         //set and reset C
-        setC = (Button) findViewById(R.id.btn_c);
+        btnC = (Button) findViewById(R.id.btn_c);
         c_x = (TextView) findViewById(R.id.c_x);
         c_y = (TextView) findViewById(R.id.c_y);
         c_x.setText("X_c: N/S");
         c_y.setText("X_c: N/S");
-        setC.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+        btnC.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
                 R.color.btn_off));
-        setC.setOnClickListener(new View.OnClickListener() {
+        btnC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!pointC.isSet){
@@ -326,7 +327,7 @@ public class Timelapse extends AppCompatActivity {
                     c_x.setText("X_c:" + pointC.x_angle);
                     c_y.setText("X_c:" + pointC.y_angle);
                     pointC.name = "C";
-                    setC.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                    btnC.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
                             R.color.btn_on));
                     if(pointA.isSet && pointB.isSet && pointC.isSet){
                         ABCSet = true;
@@ -334,14 +335,14 @@ public class Timelapse extends AppCompatActivity {
                 }
             }
         });
-        setC.setOnLongClickListener(new View.OnLongClickListener() {
+        btnC.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 pointC.reset();
                 c_x.setText("X_c: N/S");
                 c_y.setText("X_c: N/S");
                 ABCSet = false;
-                setC.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                btnC.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
                         R.color.btn_off));
                 return true;
             }
@@ -364,75 +365,31 @@ public class Timelapse extends AppCompatActivity {
             }
         });
 
-        //Move To Point A
-        moveToA = (Button)findViewById(R.id.moveToA);
-        moveToA.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                    try {
-                        //startTimelapse();
-                        destination = pointA;
-                        moveToPoint(pointA,1,"a");
-
-                        //Thread.sleep(4000);
-                        //startTimelapse();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-            }
-        });
-        //Move to Point B
-        moveToB = (Button)findViewById(R.id.moveToB);
-        moveToB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                try {
-                    destination = pointB;
-                    moveToPoint(pointB,1,"b");
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        //move to Point C
-        moveToC = (Button)findViewById(R.id.moveToC);
-        moveToC.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                try {
-                    destination = pointC;
-                    moveToPoint(pointC,1,"c");
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        btn_Joystick = (Button)findViewById(R.id.btn_joy);
+        btnJoystick = (Button)findViewById(R.id.btn_joy);
 
         //TODO change real Background
-        btn_Joystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                R.color.btn_on));
-        btn_Joystick.setOnClickListener(new View.OnClickListener() {
+        //btn_Joystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+        //        R.color.btn_off));
+        btnJoystick.setBackgroundResource(R.drawable.joy_icon_white);
+        joystickPan.setVisibility(View.GONE);
+        crossView.setVisibility(View.GONE);
+        btnJoystick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                if(joystickTime.isShown()){
-                    joystickTime.setVisibility(View.GONE);
+                if(joystickPan.isShown()){
+                    joystickPan.setVisibility(View.GONE);
                     crossView.setVisibility(View.GONE);
-                    btn_Joystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                            R.color.btn_off));
+                    //btn_Joystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                    //        R.color.btn_off));
+                    btnJoystick.setBackgroundResource(R.drawable.joy_icon_white);
                 }
                 else{
-                    joystickTime.setVisibility(View.VISIBLE);
+                    joystickPan.setVisibility(View.VISIBLE);
                     crossView.setVisibility(View.VISIBLE);
-                    btn_Joystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                    btnJoystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
                             R.color.btn_on));
+                    btnJoystick.setBackgroundResource(R.drawable.joy_icon_yellow);
                 }
             }
         });
@@ -451,8 +408,9 @@ public class Timelapse extends AppCompatActivity {
         textY.setVisibility(View.GONE);
         textBtOutput.setVisibility(View.GONE);
         textBtInput.setVisibility(View.GONE);
-        btn_i.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                R.color.btn_off));
+        //btn_i.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+          //      R.color.btn_off));
+        btn_i.setBackgroundResource(R.drawable.info_icon_white);
         btn_i.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -468,8 +426,9 @@ public class Timelapse extends AppCompatActivity {
                     textY.setVisibility(View.GONE);
                     textBtOutput.setVisibility(View.GONE);
                     textBtInput.setVisibility(View.GONE);
-                    btn_i.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                            R.color.btn_off));
+                    //btn_i.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                      //      R.color.btn_off));
+                    btn_i.setBackgroundResource(R.drawable.info_icon_white);
                     iIsShown = false;
                 }
                 else{
@@ -483,8 +442,9 @@ public class Timelapse extends AppCompatActivity {
                     textY.setVisibility(View.VISIBLE);
                     textBtOutput.setVisibility(View.VISIBLE);
                     textBtInput.setVisibility(View.VISIBLE);
-                    btn_i.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                            R.color.btn_on));
+                    //btn_i.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                      //      R.color.btn_on));
+                    btn_i.setBackgroundResource(R.drawable.info_icon_yellow);
                     iIsShown = true;
                 }
             }
@@ -536,15 +496,71 @@ public class Timelapse extends AppCompatActivity {
             }
         });
 
-        //Setting menu
-        btn_motion = (Button) findViewById(R.id.btn_motion);
-        btn_motion.setOnClickListener(new View.OnClickListener() {
+        //menu bar
+        menuBar = (LinearLayout) findViewById(R.id.menuBar);
+        //Motion menu
+        btnMotion = (Button) findViewById(R.id.btn_motion);
+        btnMotion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnMotion.setBackgroundResource(R.drawable.motion_icon_yellow);
                 showMotionMenu(v);
             }
         });
+        //Settings menu
 
+        btnSettings = (Button) findViewById(R.id.btn_settings);
+        menuSettings = (LinearLayout) findViewById(R.id.menuSettings);
+        menuSettings.setVisibility(View.GONE);
+        btnSettings.setBackgroundResource(R.drawable.settings_icon_whit);
+        //btn_settings.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+        //        R.color.btn_off));
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(settingsIsShown){
+                    menuSettings.setVisibility(View.GONE);
+                    //btn_settings.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                    //        R.color.btn_off));
+                    btnSettings.setBackgroundResource(R.drawable.settings_icon_whit);
+                    settingsIsShown = false;
+                }
+                else{
+                    menuSettings.setVisibility(View.VISIBLE);
+                    //btn_settings.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                    //        R.color.btn_on));
+                    btnSettings.setBackgroundResource(R.drawable.settings_icon_yellow);
+                    settingsIsShown = true;
+                }
+            }
+        });
+
+        btnBlock = (Button) findViewById(R.id.btn_block);
+        btnBlock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isBlocked){
+                    btnBlock.setBackgroundResource(R.drawable.block_icon_white);
+                    isBlocked = false;
+                    joystickPan.setEnabled(true);
+                    btnMotion.setEnabled(true);
+                    btnSettings.setEnabled(true);
+                    btnA.setEnabled(true);
+                    btnB.setEnabled(true);
+                    btnC.setEnabled(true);
+
+                }else{
+                    btnBlock.setBackgroundResource(R.drawable.block_icon_yellow);
+                    isBlocked = true;
+                    joystickPan.setEnabled(false);
+                    btnMotion.setEnabled(false);
+                    btnSettings.setEnabled(false);
+                    btnA.setEnabled(false);
+                    btnB.setEnabled(false);
+                    btnC.setEnabled(false);
+                }
+            }
+        });
     }
     @Override
     protected void onResume(){
@@ -622,9 +638,16 @@ public class Timelapse extends AppCompatActivity {
         PopupMenu settingsMenu = new PopupMenu(Timelapse.this,v);
         settingsMenu.getMenuInflater().inflate(R.menu.motionmenu,settingsMenu.getMenu());
         settingsMenu.show();
+        settingsMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+                btnMotion.setBackgroundResource(R.drawable.motion_icon_white);
+            }
+        });
         settingsMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                btnMotion.setBackgroundResource(R.drawable.motion_icon_white);
                 if(item.getItemId() == R.id.menuToA){
                     try {
                         destination = pointA;
@@ -787,7 +810,7 @@ public class Timelapse extends AppCompatActivity {
                 if (Math.round(orientations[1])==0){
                     textY.setBackgroundColor(Color.GREEN);
                 }else{
-                    textY.setBackgroundColor(0xFF1D171F);
+                    textY.setBackgroundColor(0x00000000);
                 }
 
             }
@@ -924,8 +947,8 @@ public class Timelapse extends AppCompatActivity {
     public void sendPosition(){
         int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0, xSpeed = speed_ratio*10, ySpeed = speed_ratio*10;
         String xDir = "0", yDir = "0";
-        xJoy = joystickTime.getNormalizedX();
-        yJoy = joystickTime.getNormalizedY();
+        xJoy = joystickPan.getNormalizedX();
+        yJoy = joystickPan.getNormalizedY();
         if(xJoy < 50){
             xSteps = 50 - xJoy;
             //left
@@ -949,7 +972,7 @@ public class Timelapse extends AppCompatActivity {
        // String msgXY =  String.format("%s%05d%s%05d",xDir,xSteps,yDir,ySteps);
         //msg(msgXY);
         Log.e("Output string", msgXY);
-        textBtOutput.setText(msgXY);
+        textBtOutput.setText("O:" + msgXY);
         //msg("try to send joystick position");
         BluetoothSendString(msgXY);
     }
@@ -962,7 +985,7 @@ public class Timelapse extends AppCompatActivity {
 
                 btSocket.getOutputStream().write(s.getBytes());
                 Log.e("bluetooth string", s);
-
+                textBtOutput.setText("O:" + s);
                 stringsent = true;
             }
             catch (IOException e)
@@ -1106,7 +1129,6 @@ public class Timelapse extends AppCompatActivity {
         }
     }
 
-
     public void handleAutomatic() throws InterruptedException, IOException {
         int ab_time, bc_time; //time in seconds from a to b and from b to c
         //TODO movingtime in settings tab not hard coded here
@@ -1219,6 +1241,7 @@ public class Timelapse extends AppCompatActivity {
 
 
     }
+
     public void resetPoints(){
         allPointsSet = false;
         ABSet = false;
