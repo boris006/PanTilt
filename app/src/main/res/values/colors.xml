@@ -11,8 +11,10 @@
     <color name="detail_orange">#FFa84e15</color>
     <color name="refresh_orange">#FF9f8260</color>
     <color name="back_grey">#FF314042</color>
-    <color name="btn_on">#FF9e8131</color>
+    <color name="btn_on">#BFFD001</color>
     <color name="btn_off">#FF695520</color>
     <color name="back_grey_trans">#7F314042</color>
+    <color name="button_on">#AFFFD000</color>
+    <color name="button_off">#AF776A3A</color>
 
 </resources>

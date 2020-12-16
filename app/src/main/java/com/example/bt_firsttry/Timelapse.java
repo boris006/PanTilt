@@ -235,8 +235,9 @@ public class Timelapse extends AppCompatActivity {
         a_y = (TextView) findViewById(R.id.a_y);
         a_x.setText("X_a: N/S");
         a_y.setText("X_a: N/S");
-        btnA.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                R.color.btn_off));
+        //btnA.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+          //      R.color.btn_off));
+        btnA.setBackgroundResource(R.drawable.button_background_off);
         btnA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -245,8 +246,7 @@ public class Timelapse extends AppCompatActivity {
                     a_x.setText("X_a:" + pointA.x_angle);
                     a_y.setText("X_a:" + pointA.y_angle);
                     pointA.name = "A";
-                    btnA.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                            R.color.btn_on));
+                    btnA.setBackgroundResource(R.drawable.button_background_on);
                     if(pointA.isSet && pointB.isSet){
                         ABSet = true;
                     }
@@ -264,8 +264,7 @@ public class Timelapse extends AppCompatActivity {
                 a_y.setText("X_a: N/S");
                 ABSet = false;
                 ABCSet = false;
-                btnA.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                        R.color.btn_off));
+                btnA.setBackgroundResource(R.drawable.button_background_off);
                 return true;
             }
         });
@@ -276,8 +275,7 @@ public class Timelapse extends AppCompatActivity {
         b_y = (TextView) findViewById(R.id.b_y);
         b_x.setText("X_b: N/S");
         b_y.setText("X_b: N/S");
-        btnB.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                R.color.btn_off));
+        btnB.setBackgroundResource(R.drawable.button_background_off);
         btnB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -286,8 +284,7 @@ public class Timelapse extends AppCompatActivity {
                     b_x.setText("X_b:" + pointB.x_angle);
                     b_y.setText("X_b:" + pointB.y_angle);
                     pointB.name = "C";
-                    btnB.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                            R.color.btn_on));
+                    btnB.setBackgroundResource(R.drawable.button_background_on);
                     if(pointA.isSet && pointB.isSet){
                         ABSet = true;
                     }
@@ -305,8 +302,7 @@ public class Timelapse extends AppCompatActivity {
                 b_y.setText("X_b: N/S");
                 ABSet = false;
                 ABCSet = false;
-                btnB.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                        R.color.btn_off));
+                btnB.setBackgroundResource(R.drawable.button_background_off);
                 return true;
             }
         });
@@ -317,8 +313,7 @@ public class Timelapse extends AppCompatActivity {
         c_y = (TextView) findViewById(R.id.c_y);
         c_x.setText("X_c: N/S");
         c_y.setText("X_c: N/S");
-        btnC.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                R.color.btn_off));
+        btnC.setBackgroundResource(R.drawable.button_background_off);
         btnC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -327,8 +322,7 @@ public class Timelapse extends AppCompatActivity {
                     c_x.setText("X_c:" + pointC.x_angle);
                     c_y.setText("X_c:" + pointC.y_angle);
                     pointC.name = "C";
-                    btnC.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                            R.color.btn_on));
+                    btnC.setBackgroundResource(R.drawable.button_background_on);
                     if(pointA.isSet && pointB.isSet && pointC.isSet){
                         ABCSet = true;
                     }
@@ -342,8 +336,7 @@ public class Timelapse extends AppCompatActivity {
                 c_x.setText("X_c: N/S");
                 c_y.setText("X_c: N/S");
                 ABCSet = false;
-                btnC.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                        R.color.btn_off));
+                btnC.setBackgroundResource(R.drawable.button_background_off);
                 return true;
             }
         });
@@ -1246,8 +1239,11 @@ public class Timelapse extends AppCompatActivity {
         ABSet = false;
         ABCSet = false;
         pointA.reset();
+        btnA.setBackgroundResource(R.drawable.button_background_off);
         pointB.reset();
+        btnB.setBackgroundResource(R.drawable.button_background_off);
         pointC.reset();
+        btnC.setBackgroundResource(R.drawable.button_background_off);
 
     }
 
