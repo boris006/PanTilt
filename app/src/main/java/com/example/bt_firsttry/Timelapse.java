@@ -380,8 +380,8 @@ public class Timelapse extends AppCompatActivity {
                 else{
                     joystickPan.setVisibility(View.VISIBLE);
                     crossView.setVisibility(View.VISIBLE);
-                    btnJoystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
-                            R.color.btn_on));
+                    //btnJoystick.setBackgroundColor(ContextCompat.getColor(Timelapse.this,
+                      //      R.color.btn_on));
                     btnJoystick.setBackgroundResource(R.drawable.joy_icon_yellow);
                 }
             }
