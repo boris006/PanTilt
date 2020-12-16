@@ -35,7 +35,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.content.ContextCompat;
 
 import com.example.bt_firsttry.views.CustomView;
 
@@ -98,13 +97,13 @@ public class Timelapse extends AppCompatActivity {
     //Automatic Mode Point Initialisation
     Boolean allPointsSet = false, continueMoving = false, stringsent = true, updatedSensors = false, positionA = false,
     ABSet = false, ABCSet = false;
-    Button setPoint, btnA, btnB, btnC,timelapse;
+    Button setPoint, btnA, btnB, btnC, btn_timelapse;
     Point pointA, pointB, pointC, destination, position;
     TextView a_x, a_y, b_x, b_y, c_x, c_y;
     int automaticStep;
 
     //SeekBar Speed Moving Time
-    TextView txtMovingTime;
+    TextView txtMovingTime, txtSpeedRatio;
     int speed_ratio = 50;
     int counter = 0;
     int movingtime = 60;     //overall moving time in seconds (ab + bc = movingtime)//TODO moving time moved here
@@ -344,8 +343,8 @@ public class Timelapse extends AppCompatActivity {
 
         //Start automatic Mode with Timelapse Button
         automaticStep = 0;
-        timelapse = (Button)findViewById(R.id.timelapse);
-        timelapse.setOnClickListener(new View.OnClickListener() {
+        btn_timelapse = (Button)findViewById(R.id.timelapse);
+        btn_timelapse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -445,8 +444,11 @@ public class Timelapse extends AppCompatActivity {
 
         //SeekBar and text
         txtMovingTime = (TextView) findViewById(R.id.txtMovingSpeed);
+        txtSpeedRatio = (TextView) findViewById(R.id.txtSpeedRatio);
         SeekBar sBMovingTime = findViewById(R.id.sBMovingTime);
-        sBMovingTime.setOnSeekBarChangeListener(seekBarChangeListener);
+        SeekBar sBSpeedRatio = findViewById(R.id.sBSpeedRatio);
+        sBMovingTime.setOnSeekBarChangeListener(seekBarTimeChangeListener);
+        sBSpeedRatio.setOnSeekBarChangeListener(seekBarRatioChangeListener);
        //sBMovingTime.setOnSeekBarChangeListener(seekBarChangeListener1);
         int progress = sBMovingTime.getProgress();
         setMovingTime(3);
@@ -537,20 +539,24 @@ public class Timelapse extends AppCompatActivity {
                     isBlocked = false;
                     joystickPan.setEnabled(true);
                     btnMotion.setEnabled(true);
-                    btnSettings.setEnabled(true);
                     btnA.setEnabled(true);
                     btnB.setEnabled(true);
                     btnC.setEnabled(true);
+                    sBMovingTime.setEnabled(true);
+                    sBSpeedRatio.setEnabled(true);
+                    SwitchCapture.setEnabled(true);
 
                 }else{
                     btnBlock.setBackgroundResource(R.drawable.block_icon_yellow);
                     isBlocked = true;
                     joystickPan.setEnabled(false);
                     btnMotion.setEnabled(false);
-                    btnSettings.setEnabled(false);
                     btnA.setEnabled(false);
                     btnB.setEnabled(false);
                     btnC.setEnabled(false);
+                    sBMovingTime.setEnabled(false);
+                    sBSpeedRatio.setEnabled(false);
+                    SwitchCapture.setEnabled(false);
                 }
             }
         });
@@ -607,7 +613,7 @@ public class Timelapse extends AppCompatActivity {
         }
     }
 
-    SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    SeekBar.OnSeekBarChangeListener seekBarTimeChangeListener = new SeekBar.OnSeekBarChangeListener() {
 
         @Override
         public void onProgressChanged(SeekBar seekBarSpeed, int progress, boolean fromUser) {
@@ -623,6 +629,24 @@ public class Timelapse extends AppCompatActivity {
         @Override
         public void onStopTrackingTouch(SeekBar seekBarSpeed) {
             // called after the user finishes moving the SeekBar
+        }
+    };
+
+    SeekBar.OnSeekBarChangeListener seekBarRatioChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            speed_ratio = progress;
+            txtSpeedRatio.setText("Time ratio at B: " + progress + "%");
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
         }
     };
 
@@ -689,9 +713,11 @@ public class Timelapse extends AppCompatActivity {
     public void buttonHandler() {
         //Button timelapse = (Button) findViewById(R.id.timelapse);
         if (recording == Boolean.FALSE) {
-            timelapse.setText("Timelapse Starten");
+            //btn_timelapse.setText("Timelapse Starten");
+            btn_timelapse.setBackgroundResource(R.drawable.icon_camera_white);
         } else {
-            timelapse.setText("Timelapse Stoppen");
+            //btn_timelapse.setText("Timelapse Stoppen");
+            btn_timelapse.setBackgroundResource(R.drawable.icon_camera_yellow);
         }
 
 
