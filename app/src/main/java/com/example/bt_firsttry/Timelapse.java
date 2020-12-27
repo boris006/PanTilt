@@ -874,13 +874,12 @@ public class Timelapse extends AppCompatActivity {
 
         String msgXY =  String.format("%s%05d%04d%s%05d%04d4",xDir,xSteps,xSpeed,yDir,ySteps,ySpeed);
         Log.e("Output string", msgXY);
-        textBtOutput.setText("Out:" + msgXY);;
         BluetoothSendString(msgXY);
     }
 
 
     private void BluetoothSendString(String s){
-        if (btSocket!=null)
+        if (btSocket.isConnected())
         {
             try
             {

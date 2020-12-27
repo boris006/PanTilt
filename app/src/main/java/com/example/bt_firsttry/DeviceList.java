@@ -139,7 +139,6 @@ public class DeviceList extends AppCompatActivity {
             //get the devices MAC address, meaning the last 17chars in the view
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
-            //TODO: try getApplicationContext() instead of DeviceList.this->works
             //Make an intent to start next activity
             Intent i = new Intent(DeviceList.this, Timelapse.class);
 
