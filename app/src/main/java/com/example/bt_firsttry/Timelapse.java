@@ -183,7 +183,7 @@ public class Timelapse extends AppCompatActivity {
         a_x = (TextView) findViewById(R.id.a_x);
         a_y = (TextView) findViewById(R.id.a_y);
         a_x.setText("X_a: N/S");
-        a_y.setText("X_a: N/S");
+        a_y.setText("Y_a: N/S");
         btnA.setBackgroundResource(R.drawable.button_background_off);
         btnA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,7 +191,7 @@ public class Timelapse extends AppCompatActivity {
                 if(!pointA.isSet){
                     pointA.setFromOrientation();
                     a_x.setText("X_a:" + pointA.x_angle);
-                    a_y.setText("X_a:" + pointA.y_angle);
+                    a_y.setText("Y_a:" + pointA.y_angle);
                     pointA.name = "A";
                     btnA.setBackgroundResource(R.drawable.button_background_on);
                     if(pointA.isSet && pointB.isSet){
@@ -208,7 +208,7 @@ public class Timelapse extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 pointA.reset();
                 a_x.setText("X_a: N/S");
-                a_y.setText("X_a: N/S");
+                a_y.setText("Y_a: N/S");
                 ABSet = false;
                 ABCSet = false;
                 btnA.setBackgroundResource(R.drawable.button_background_off);
@@ -221,7 +221,7 @@ public class Timelapse extends AppCompatActivity {
         b_x = (TextView) findViewById(R.id.b_x);
         b_y = (TextView) findViewById(R.id.b_y);
         b_x.setText("X_b: N/S");
-        b_y.setText("X_b: N/S");
+        b_y.setText("Y_b: N/S");
         btnB.setBackgroundResource(R.drawable.button_background_off);
         btnB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,7 +229,7 @@ public class Timelapse extends AppCompatActivity {
                 if (!pointB.isSet){
                     pointB.setFromOrientation();
                     b_x.setText("X_b:" + pointB.x_angle);
-                    b_y.setText("X_b:" + pointB.y_angle);
+                    b_y.setText("Y_b:" + pointB.y_angle);
                     pointB.name = "C";
                     btnB.setBackgroundResource(R.drawable.button_background_on);
                     if(pointA.isSet && pointB.isSet){
@@ -246,7 +246,7 @@ public class Timelapse extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 pointB.reset();
                 b_x.setText("X_b: N/S");
-                b_y.setText("X_b: N/S");
+                b_y.setText("Y_b: N/S");
                 ABSet = false;
                 ABCSet = false;
                 btnB.setBackgroundResource(R.drawable.button_background_off);
@@ -259,7 +259,7 @@ public class Timelapse extends AppCompatActivity {
         c_x = (TextView) findViewById(R.id.c_x);
         c_y = (TextView) findViewById(R.id.c_y);
         c_x.setText("X_c: N/S");
-        c_y.setText("X_c: N/S");
+        c_y.setText("Y_c: N/S");
         btnC.setBackgroundResource(R.drawable.button_background_off);
         btnC.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -267,7 +267,7 @@ public class Timelapse extends AppCompatActivity {
                 if(!pointC.isSet){
                     pointC.setFromOrientation();
                     c_x.setText("X_c:" + pointC.x_angle);
-                    c_y.setText("X_c:" + pointC.y_angle);
+                    c_y.setText("Y_c:" + pointC.y_angle);
                     pointC.name = "C";
                     btnC.setBackgroundResource(R.drawable.button_background_on);
                     if(pointA.isSet && pointB.isSet && pointC.isSet){
@@ -281,7 +281,7 @@ public class Timelapse extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 pointC.reset();
                 c_x.setText("X_c: N/S");
-                c_y.setText("X_c: N/S");
+                c_y.setText("Y_c: N/S");
                 ABCSet = false;
                 btnC.setBackgroundResource(R.drawable.button_background_off);
                 return true;
