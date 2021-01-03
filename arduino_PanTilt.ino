@@ -34,8 +34,8 @@ void setup()
 {  
     Serial.begin(9600);
     B.begin(9600);
-    pan.setMaxSpeed(5000.0);
-    pan.setAcceleration(3000.0);
+    pan.setMaxSpeed(20000.0);
+    pan.setAcceleration(5000.0);
     
     tilt.setMaxSpeed(1000.0);
     tilt.setAcceleration(3000.0);
@@ -49,13 +49,22 @@ int processAnalog(int analogDiff){
   if((analogDiff < 600)and(analogDiff > 500)){
     diff = 0;
   }
-  if(analogDiff < 500){
-    diff = -1 * (500 -analogDiff);
-    diff = round(diff/10);
+  if(analogDiff < 450){
+    if(analogDiff < 100){
+      diff = -1 * (450 -analogDiff);
+    }else{
+      diff = -1 * (450 -analogDiff);
+      diff = round(diff/5);
+    }
+    
   }
-  if(analogDiff > 600){
-    diff = analogDiff - 500;
-    diff = round(diff/10);
+  if(analogDiff > 650){
+    if(analogDiff > 950){
+      diff = analogDiff - 500;
+    }else{
+      diff = analogDiff - 500;
+      diff = round(diff/5);
+    }
   }
   return diff;
 }
@@ -192,7 +201,7 @@ void loop()
           PositionReached = true;
        }
             
-         
+   //Serial.println(String(pan_diff));     
     pan.run();
     tilt.run();
     
