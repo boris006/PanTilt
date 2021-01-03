@@ -16,6 +16,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -29,6 +30,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,6 +98,11 @@ public class Timelapse extends AppCompatActivity {
     TextView textMovingTime, textSpeedRatio;
     int speedRatio = 50;
     int movingTime = 60;     //overall moving time in seconds (ab + bc = movingtime)//TODO moving time moved here
+
+    //Progressbar
+    ProgressBar myProgressBar;
+    CountDownTimer myProgressCountdown;
+    int timerProgress = 0;
 
     //initialize Point class
     class Point{
@@ -465,6 +472,29 @@ public class Timelapse extends AppCompatActivity {
                 }
             }
         });
+
+        //progress bar
+        myProgressBar = (ProgressBar)findViewById(R.id.progressBarTimer);
+        myProgressBar.setProgress(0);
+        myProgressBar.setVisibility(View.GONE);
+        myProgressCountdown = new CountDownTimer(movingTime * 1000,1000) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timerProgress++;
+                myProgressBar.setProgress((int)timerProgress*100/(movingTime));
+
+            }
+
+            @Override
+            public void onFinish() {
+                //Do what you want
+                timerProgress++;
+                myProgressBar.setProgress(100);
+            }
+        };
+
+
     }
 
     @Override
@@ -484,6 +514,9 @@ public class Timelapse extends AppCompatActivity {
     @Override
     protected void onPause() {//what happens when you tap out or leave application
         super.onPause();
+        myProgressBar.setVisibility(View.GONE);
+        timerProgress = 0;
+        myProgressCountdown.cancel();
 
         if (recording = Boolean.TRUE) {//stop recording if recording
 
@@ -1046,6 +1079,7 @@ public class Timelapse extends AppCompatActivity {
         switch(automaticStep){
             case 0: {
                 //move to A
+                myProgressBar.setVisibility(View.VISIBLE);
                 moveToPoint(pointA, 0, "1");
                 automaticStep = 1;
                 break;
@@ -1060,6 +1094,7 @@ public class Timelapse extends AppCompatActivity {
 
                 //start recording
                 startTimelapse();
+                myProgressCountdown.start();
                 msg("Recording started");
 
 
@@ -1124,6 +1159,9 @@ public class Timelapse extends AppCompatActivity {
 
                 //stop recording
                 startTimelapse();
+                myProgressBar.setVisibility(View.GONE);
+                myProgressCountdown.cancel();
+                timerProgress = 0;
                 msg("Recording stopped");
 
                 //reset handleAutomatic
