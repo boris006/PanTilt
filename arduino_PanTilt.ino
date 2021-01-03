@@ -19,10 +19,10 @@ int pan_diff = 0;
 int tilt_diff = 0;
 const int inputx = A0;
 const int inputy = A1;
-int setpointX = 0;
-int setpointY = 0;
-int currentX = 0;
-int currentY = 0;
+long setpointX = 0;
+long setpointY = 0;
+long currentX = 0;
+long currentY = 0;
 int startMillis = 0;
 int startMillisBlue = 0;
 int incomingByte = 0;
@@ -39,9 +39,6 @@ void setup()
     
     tilt.setMaxSpeed(1000.0);
     tilt.setAcceleration(3000.0);
-    
-    //pan.moveTo(setpointX);  
-   // tilt.moveTo(setpointY);
 }
 
 int processAnalog(int analogDiff){
@@ -73,21 +70,6 @@ int processAnalog(int analogDiff){
 
 void loop()
 {
-  
-//    while(Serial.available()>0){
-//      pan_diff = Serial.parseInt();
-//      tilt_diff = Serial.parseInt();
-//      if(Serial.available() == "\n"){
-//        setpointX = setpointX + pan_diff;
-//        setpointY = setpointY + tilt_diff;
-//        Serial.println("X: "+ String(setpointX) + "      Y: " + String(setpointY));
-//      }
-//    }
-    
-    //get the current "time" (actually the number of milliseconds since the program started)
-         
-         //int currentMillisBlue = millis();
-         //if (currentMillisBlue - startMillisBlue >= 5){
          if (B.available() > 0) {
           oldString = "";
           while(oldString.length() < 21){
@@ -100,9 +82,6 @@ void loop()
               if (oldString.length() == 21){
                 Serial.print("I will process: ");
                 Serial.println(oldString);
-                //Serial.println("8 Zeichen lang");
-                //Serial.println(oldString.substring(0,4));
-                //Serial.println(oldString.substring(4,8));
                 int dir_pan, dir_tilt = 0;
                 int pan_speed, tilt_speed = 0;
                 dir_pan = oldString.substring(0,1).toInt();
@@ -120,7 +99,6 @@ void loop()
                       pan_diff = 0;
                       tilt_diff = 0;
                     }
-                    
                 }
 
                 
@@ -136,11 +114,7 @@ void loop()
                     }
                     
                 }
-            
 
-
-                
-               
                 setpointX = setpointX + pan_diff;
                 setpointY = setpointY + tilt_diff;
                 pan.setMaxSpeed(pan_speed);
@@ -148,21 +122,16 @@ void loop()
                 pan.moveTo(setpointX);
                 tilt.moveTo(setpointY);
                 
-                
                 Serial.println("x moved to " + String(pan_diff) + " with speed: " + String(pan_speed)+ " y moved to " + String(tilt_diff)+" with speed: " + String(tilt_speed));
                 msg = oldString.substring(20,21);
                 Serial.println("message: " + msg);
-                PositionReached = false;
-
-              
+                PositionReached = false;  
           }
-          
          }
          
         
         int currentMillis = millis();
         if (currentMillis - startMillis >= 50){
-  
           pan_diff = processAnalog(analogRead(inputy));
           tilt_diff = processAnalog(analogRead(inputx));
           setpointX = setpointX + pan_diff;
@@ -180,11 +149,6 @@ void loop()
              tilt.enableOutputs();
              tilt.moveTo(setpointY);
           }
-          //PositionReached = false;
-        
-        
-       
-        
           startMillis = currentMillis;
        }
 
@@ -199,9 +163,7 @@ void loop()
             Serial.println("first done");
           }
           PositionReached = true;
-       }
-            
-   //Serial.println(String(pan_diff));     
+       }    
     pan.run();
     tilt.run();
     
