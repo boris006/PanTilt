@@ -53,7 +53,7 @@ public class Timelapse extends AppCompatActivity {
     SurfaceHolder mHolder; //holder for surfaceView
     ShowCamera showCamera; //Class for camera preview on framelayout
     MediaRecorder recorder;
-    int captureRate; //capture Rate of the camera
+    int captureRate = 3; //capture Rate of the camera
     SwitchCompat switchCapture;
     Boolean recording = Boolean.FALSE;
 
@@ -171,7 +171,7 @@ public class Timelapse extends AppCompatActivity {
                 sendPosition();
 
             }
-        },100); //TODO send interval in ms
+        },200); //TODO send interval in ms
 
         //text sensors
         textX = (TextView) findViewById(R.id.textViewX);
@@ -402,7 +402,7 @@ public class Timelapse extends AppCompatActivity {
                     captureRate = 3;
                     Log.e("Switch","Timelapse on");
                 }else{
-                    captureRate = 30;
+                    captureRate = 25;
                     Log.e("Switch","Timelapse off");
                 }
             }
@@ -882,13 +882,16 @@ public class Timelapse extends AppCompatActivity {
 
 
     public void sendPosition(){
-        int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0, xSpeed = 3000, ySpeed = 3000;
+        int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0, xSpeed = 9999, ySpeed = 3000, xfactor = 2;
         String xDir = "0", yDir = "0";
         xJoy = joystickPan.getNormalizedX();
         yJoy = joystickPan.getNormalizedY();
+
         if(xJoy < 50){
             xSteps = 50 - xJoy;
+
             //left
+
             xDir = "0";
         }
         if(yJoy < 50){
@@ -905,6 +908,7 @@ public class Timelapse extends AppCompatActivity {
             yDir = "1";
         }
 
+        xSteps = Math.round(xSteps / xfactor);
         String msgXY =  String.format("%s%05d%04d%s%05d%04d4",xDir,xSteps,xSpeed,yDir,ySteps,ySpeed);
         Log.e("Output string", msgXY);
         BluetoothSendString(msgXY);
