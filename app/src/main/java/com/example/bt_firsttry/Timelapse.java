@@ -96,7 +96,7 @@ public class Timelapse extends AppCompatActivity {
 
     //SeekBar Speed Moving Time
     TextView textMovingTime, textSpeedRatio;
-    int speedRatio = 50;
+    int speedRatio = 50, xspeedlast, yspeedlast;
     int movingTime = 60;     //overall moving time in seconds (ab + bc = movingtime)//TODO moving time moved here
 
     //Progressbar
@@ -934,7 +934,7 @@ public class Timelapse extends AppCompatActivity {
     public void moveToPoint(Point p, int time,String msg) throws InterruptedException {
         int delta_x, delta_y, y_ratio = 111, xSteps, ySteps, xOutPutSteps, yOutPutSteps; //34 and 111 steps per degree
         String xDir, yDir;
-        float x_ratio = (float) 33.77;
+        float x_ratio = (float) 33.77*9;
         int xSpeed, ySpeed;
         int current_x_angle = Math.round(orientations[0]); //current orientations
         int current_y_angle = Math.round(orientations[1]);
@@ -964,15 +964,26 @@ public class Timelapse extends AppCompatActivity {
         //calculate Speeds in step/s at a given time in seconds
         if (time == 0){
             //as fast as possible
-            xSpeed = 1000;
-            ySpeed = 1000;
+            xSpeed = 5000;
+            ySpeed = 3000;
         }else{
             //speed according to range of steps and available time
             xSpeed = Math.round(xSteps/time);
             ySpeed = Math.round(ySteps/time);
+            //xSpeed = 50;
+            //ySpeed = 50;
 
         }
 
+        if (msg =="5"){
+            //errorcheck
+            //use last calculated speed
+            xSpeed = xspeedlast;
+            ySpeed = yspeedlast;
+        }
+
+        xspeedlast = xSpeed;
+        yspeedlast = ySpeed;
         yOutPutSteps = ySteps;
         xOutPutSteps = xSteps;
         String msgXY =  String.format("%s%05d%04d%s%05d%04d%s",xDir,xOutPutSteps,xSpeed,yDir,yOutPutSteps,ySpeed,msg);
@@ -1111,21 +1122,21 @@ public class Timelapse extends AppCompatActivity {
             case 3: {
                 //error check Point B
 
-                moveToPoint(pointB, ab_time, "2");
-                automaticStep = 4;
+                moveToPoint(pointB, ab_time, "5");
+                automaticStep = 5;
                 break;
             }
             case 4: {
                 //error check Point B
 
-                moveToPoint(pointB, ab_time,"2");
+                moveToPoint(pointB, ab_time,"5");
                 automaticStep = 5;
                 break;
             }
             case 5: {
                 //error check Point B
 
-                moveToPoint(pointB, ab_time,"2");
+                //moveToPoint(pointB, ab_time,"5");
                 if (ABCSet){
                     //move to point C
                     automaticStep = 6;
@@ -1145,7 +1156,7 @@ public class Timelapse extends AppCompatActivity {
             case 7: {
                 //error check Point  C
 
-                moveToPoint(pointC, 0,"2");
+                moveToPoint(pointC, 0,"5");
                 automaticStep = 9;
                 break;
             }
