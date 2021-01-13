@@ -47,7 +47,6 @@ public class DeviceList extends AppCompatActivity {
 
         //calling widgets
         btnPaired =(Button)findViewById(R.id.btnDevices);
-        startTimelapse = (Button)findViewById(R.id.startTimelapse);
         deviceList = (ListView)findViewById(R.id.listDevices);
 
         //get device bluetooth adapter
@@ -66,17 +65,6 @@ public class DeviceList extends AppCompatActivity {
                 //if clicked call function
                 checkBluetoothEnabled();
                 //pairedDevicesList();
-            }
-        });
-        startTimelapse.setOnClickListener(new View.OnClickListener() {
-            //@RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void onClick(View v) {
-                //start Timelapse
-                Intent i = new Intent(getApplicationContext(), Control.class);
-                startActivity(i);
-                overridePendingTransition(R.anim.zoom_in,R.anim.static_animation);
-
             }
         });
 

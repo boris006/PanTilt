@@ -58,15 +58,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/startTimelapse"
-            style="@style/RefreshStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="LED Control"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ListView
             android:id="@+id/listDevices"
             android:layout_width="wrap_content"
