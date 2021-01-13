@@ -1,13 +1,17 @@
 package com.example.bt_firsttry;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -75,6 +79,13 @@ public class DeviceList extends AppCompatActivity {
 
             }
         });
+
+        int MyVersion = Build.VERSION.SDK_INT;
+        if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (!checkIfAlreadyHavePermission()) {
+                requestForSpecificPermission();
+            }
+        }
     }
 
 
@@ -131,6 +142,7 @@ public class DeviceList extends AppCompatActivity {
         deviceList.setOnItemClickListener(myListClickListener);
 
     }
+
     private AdapterView.OnItemClickListener myListClickListener = new AdapterView.OnItemClickListener()
     {
 
@@ -153,23 +165,45 @@ public class DeviceList extends AppCompatActivity {
         }
     };
 
-    //@RequiresApi(api = Build.VERSION_CODES.M)
-    public boolean checkPermission(){
-        int requestcode = 1;
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
-                PackageManager.PERMISSION_GRANTED)&&((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED))&&(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) ==
-                PackageManager.PERMISSION_GRANTED)) {
-            // You can use the API that requires the permission.
-                return true;
+    //check if permission are already granted
+    private boolean checkIfAlreadyHavePermission() {
+        int checkResultCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        int checkResultStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int checkResultAudio = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        if (checkResultCamera == PackageManager.PERMISSION_GRANTED) {
+            if (checkResultStorage == PackageManager.PERMISSION_GRANTED) {
+                if (checkResultAudio == PackageManager.PERMISSION_GRANTED) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         } else {
-            // You can directly ask for the permission.
-            // The registered ActivityResultCallback gets the result of this request.
-           //requestPermissions(new String[] {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECORD_AUDIO}, requestcode);
-            // requestPermissionLauncher.launch(Manifest.permission.REQUESTED_PERMISSION)
             return false;
         }
-
+    }
+    //Request the permissions
+    private void requestForSpecificPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA ,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
     }
 
+    //get the result of the request
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //granted
+                } else {
+                    //not granted
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 }

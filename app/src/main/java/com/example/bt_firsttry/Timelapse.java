@@ -45,6 +45,9 @@ import java.util.Date;
 import java.util.UUID;
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 public class Timelapse extends AppCompatActivity {
     //init Camera and Timelapse
     Camera camera; //camera
@@ -55,7 +58,7 @@ public class Timelapse extends AppCompatActivity {
     MediaRecorder recorder;
     int captureRate; //capture Rate of the camera
     SwitchCompat switchCapture;
-    Boolean recording = Boolean.FALSE;
+    Boolean recording = FALSE;
 
     //Joystick
     JoystickView joystickPan; //joystick for manual panTilt adjustments
@@ -97,7 +100,7 @@ public class Timelapse extends AppCompatActivity {
     //SeekBar Speed Moving Time
     TextView textMovingTime, textSpeedRatio;
     int speedRatio = 50;
-    int movingTime = 60;     //overall moving time in seconds (ab + bc = movingtime)//TODO moving time moved here
+    int movingTime = 60;     //overall moving time in seconds (ab + bc = movingtime)
 
     //Progressbar
     ProgressBar myProgressBar;
@@ -171,7 +174,7 @@ public class Timelapse extends AppCompatActivity {
                 sendPosition();
 
             }
-        },100); //TODO send interval in ms
+        },100); // send interval in ms
 
         //text sensors
         textX = (TextView) findViewById(R.id.textViewX);
@@ -297,17 +300,35 @@ public class Timelapse extends AppCompatActivity {
 
 
         //Start automatic Mode with time lapse Button
-        automaticStep = 0;
+        automaticStep = 0; //TODO implement blocking when activated
         btnTimeLapse = (Button)findViewById(R.id.timelapse);
         btnTimeLapse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    handleAutomatic();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(automaticStep == 0){
+                    try {
+                        handleAutomatic();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    automaticStep = 0;
+                    myProgressBar.setVisibility(View.GONE);
+                    myProgressCountdown.cancel();
+                    timerProgress = 0;
+                    msg("Recording stopped");
+                    if(recording == TRUE){
+                        recorder.stop(); //stop recording
+                        recorder.reset();
+                        Log.e("state","recording has been stopped4");
+                        frameLayout.setVisibility(View.VISIBLE);
+                        showCamera.startShowing();
+                        recording = Boolean.FALSE; //Change Text of Button
+                        buttonHandler();
+                    }
+
                 }
             }
         });
@@ -474,7 +495,7 @@ public class Timelapse extends AppCompatActivity {
         });
 
         //progress bar
-        myProgressBar = (ProgressBar)findViewById(R.id.progressBarTimer);
+        myProgressBar = (ProgressBar) findViewById(R.id.progressBarTimer);
         myProgressBar.setProgress(0);
         myProgressBar.setVisibility(View.GONE);
         myProgressCountdown = new CountDownTimer(movingTime * 1000,1000) {
@@ -520,7 +541,7 @@ public class Timelapse extends AppCompatActivity {
 
         if (recording = Boolean.TRUE) {//stop recording if recording
 
-            recording = Boolean.FALSE; //Change Text of Button
+            recording = FALSE; //Change Text of Button
             buttonHandler();
             recorder.reset();
         }
@@ -652,7 +673,7 @@ public class Timelapse extends AppCompatActivity {
 
     public void buttonHandler() {//handler start Timelapse button
         //Button timelapse = (Button) findViewById(R.id.timelapse);
-        if (recording == Boolean.FALSE) {
+        if (recording == FALSE) {
             //btn_timelapse.setText("Timelapse Starten");
             btnTimeLapse.setBackgroundResource(R.drawable.icon_camera_white);
         } else {
@@ -665,7 +686,7 @@ public class Timelapse extends AppCompatActivity {
 
     public void startTimelapse() throws IOException {
         //
-        if (recording == Boolean.FALSE) { //not recording yet but starting
+        if (recording == FALSE) { //not recording yet but starting
             showCamera.stopShowing();   //Turn Off Camera Preview
             frameLayout.setVisibility(View.INVISIBLE); //Set Framelayout invisble, to show recording of timelapse
             Log.e("state","trying started1");
@@ -722,7 +743,7 @@ public class Timelapse extends AppCompatActivity {
             frameLayout.setVisibility(View.VISIBLE);
             showCamera.startShowing();
 
-            recording = Boolean.FALSE; //Change Text of Button
+            recording = FALSE; //Change Text of Button
             buttonHandler();
         }
     }
