@@ -101,6 +101,9 @@ public class Timelapse extends AppCompatActivity {
     TextView textMovingTime, textSpeedRatio;
     int speedRatio = 50;
     int movingTime = 60;     //overall moving time in seconds (ab + bc = movingtime)
+    SeekBar sBMovingTime;
+    SeekBar sBSpeedRatio;
+
 
     //Progressbar
     ProgressBar myProgressBar;
@@ -182,6 +185,8 @@ public class Timelapse extends AppCompatActivity {
         //text Bt
         textBtOutput = (TextView) findViewById(R.id.txt_btSendString);
         textBtInput = (TextView) findViewById(R.id.textViewData);
+
+
 
         //Automatic Mode Point Initialisation
         pointA = new Point();
@@ -300,36 +305,60 @@ public class Timelapse extends AppCompatActivity {
 
 
         //Start automatic Mode with time lapse Button
-        automaticStep = 0; //TODO implement blocking when activated
+        automaticStep = 0;
         btnTimeLapse = (Button)findViewById(R.id.timelapse);
+        //init seek Bars
+        sBMovingTime = findViewById(R.id.sBMovingTime);
+        sBSpeedRatio = findViewById(R.id.sBSpeedRatio);
         btnTimeLapse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(automaticStep == 0){
-                    try {
-                        handleAutomatic();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                if(pointA.isSet && pointB.isSet){
+                    if(automaticStep == 0){
+                        try {
+                            handleAutomatic();
+                            btnA.setEnabled(FALSE);
+                            btnB.setEnabled(FALSE);
+                            btnC.setEnabled(FALSE);
+                            btnMotion.setEnabled(FALSE);
+                            switchCapture.setEnabled(FALSE);
+                            joystickPan.setEnabled(FALSE);
+                            sBMovingTime.setEnabled(FALSE);
+                            sBSpeedRatio.setEnabled(FALSE);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        automaticStep = 0;
+                        myProgressBar.setVisibility(View.GONE);
+                        myProgressCountdown.cancel();
+                        timerProgress = 0;
+                        btnA.setEnabled(TRUE);
+                        btnB.setEnabled(TRUE);
+                        btnC.setEnabled(TRUE);
+                        btnMotion.setEnabled(TRUE);
+                        switchCapture.setEnabled(TRUE);
+                        joystickPan.setEnabled(TRUE);
+                        sBMovingTime.setEnabled(TRUE);
+                        sBSpeedRatio.setEnabled(TRUE);
+                        if(recording == TRUE){
+                            recorder.stop(); //stop recording
+                            recorder.reset();
+                            Log.e("state","recording has been stopped4");
+                            frameLayout.setVisibility(View.VISIBLE);
+                            showCamera.startShowing();
+                            recording = Boolean.FALSE; //Change Text of Button
+                            buttonHandler();
+                            msg("Recording stopped");
+                        }
+
                     }
                 }else{
-                    automaticStep = 0;
-                    myProgressBar.setVisibility(View.GONE);
-                    myProgressCountdown.cancel();
-                    timerProgress = 0;
-                    msg("Recording stopped");
-                    if(recording == TRUE){
-                        recorder.stop(); //stop recording
-                        recorder.reset();
-                        Log.e("state","recording has been stopped4");
-                        frameLayout.setVisibility(View.VISIBLE);
-                        showCamera.startShowing();
-                        recording = Boolean.FALSE; //Change Text of Button
-                        buttonHandler();
-                    }
-
+                    msg("Please set points");
                 }
+
             }
         });
 
@@ -407,8 +436,6 @@ public class Timelapse extends AppCompatActivity {
         //SeekBar and text
         textMovingTime = (TextView) findViewById(R.id.txtMovingSpeed);
         textSpeedRatio = (TextView) findViewById(R.id.txtSpeedRatio);
-        SeekBar sBMovingTime = findViewById(R.id.sBMovingTime);
-        SeekBar sBSpeedRatio = findViewById(R.id.sBSpeedRatio);
         sBMovingTime.setOnSeekBarChangeListener(seekBarTimeChangeListener);
         sBSpeedRatio.setOnSeekBarChangeListener(seekBarRatioChangeListener);
         setMovingTime(3);
@@ -1187,6 +1214,15 @@ public class Timelapse extends AppCompatActivity {
 
                 //reset handleAutomatic
                 automaticStep = 0;
+
+                btnA.setEnabled(TRUE);
+                btnB.setEnabled(TRUE);
+                btnC.setEnabled(TRUE);
+                btnMotion.setEnabled(TRUE);
+                switchCapture.setEnabled(TRUE);
+                joystickPan.setEnabled(TRUE);
+                sBMovingTime.setEnabled(TRUE);
+                sBSpeedRatio.setEnabled(TRUE);
 
                 //reset all points
                 resetPoints();
