@@ -45,6 +45,9 @@ import java.util.Date;
 import java.util.UUID;
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 public class Timelapse extends AppCompatActivity {
     //init Camera and Timelapse
     Camera camera; //camera
@@ -53,9 +56,9 @@ public class Timelapse extends AppCompatActivity {
     SurfaceHolder mHolder; //holder for surfaceView
     ShowCamera showCamera; //Class for camera preview on framelayout
     MediaRecorder recorder;
-    int captureRate = 3; //capture Rate of the camera
+    int captureRate; //capture Rate of the camera
     SwitchCompat switchCapture;
-    Boolean recording = Boolean.FALSE;
+    Boolean recording = FALSE;
 
     //Joystick
     JoystickView joystickPan; //joystick for manual panTilt adjustments
@@ -96,8 +99,11 @@ public class Timelapse extends AppCompatActivity {
 
     //SeekBar Speed Moving Time
     TextView textMovingTime, textSpeedRatio;
-    int speedRatio = 50, xspeedlast, yspeedlast;
-    int movingTime = 60;     //overall moving time in seconds (ab + bc = movingtime)//TODO moving time moved here
+    int speedRatio = 50;
+    int movingTime = 60;     //overall moving time in seconds (ab + bc = movingtime)
+    SeekBar sBMovingTime;
+    SeekBar sBSpeedRatio;
+
 
     //Progressbar
     ProgressBar myProgressBar;
@@ -171,7 +177,7 @@ public class Timelapse extends AppCompatActivity {
                 sendPosition();
 
             }
-        },200); //TODO send interval in ms
+        },100); // send interval in ms
 
         //text sensors
         textX = (TextView) findViewById(R.id.textViewX);
@@ -179,6 +185,8 @@ public class Timelapse extends AppCompatActivity {
         //text Bt
         textBtOutput = (TextView) findViewById(R.id.txt_btSendString);
         textBtInput = (TextView) findViewById(R.id.textViewData);
+
+
 
         //Automatic Mode Point Initialisation
         pointA = new Point();
@@ -299,16 +307,58 @@ public class Timelapse extends AppCompatActivity {
         //Start automatic Mode with time lapse Button
         automaticStep = 0;
         btnTimeLapse = (Button)findViewById(R.id.timelapse);
+        //init seek Bars
+        sBMovingTime = findViewById(R.id.sBMovingTime);
+        sBSpeedRatio = findViewById(R.id.sBSpeedRatio);
         btnTimeLapse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    handleAutomatic();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(pointA.isSet && pointB.isSet){
+                    if(automaticStep == 0){
+                        try {
+                            handleAutomatic();
+                            btnA.setEnabled(FALSE);
+                            btnB.setEnabled(FALSE);
+                            btnC.setEnabled(FALSE);
+                            btnMotion.setEnabled(FALSE);
+                            switchCapture.setEnabled(FALSE);
+                            joystickPan.setEnabled(FALSE);
+                            sBMovingTime.setEnabled(FALSE);
+                            sBSpeedRatio.setEnabled(FALSE);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        automaticStep = 0;
+                        myProgressBar.setVisibility(View.GONE);
+                        myProgressCountdown.cancel();
+                        timerProgress = 0;
+                        btnA.setEnabled(TRUE);
+                        btnB.setEnabled(TRUE);
+                        btnC.setEnabled(TRUE);
+                        btnMotion.setEnabled(TRUE);
+                        switchCapture.setEnabled(TRUE);
+                        joystickPan.setEnabled(TRUE);
+                        sBMovingTime.setEnabled(TRUE);
+                        sBSpeedRatio.setEnabled(TRUE);
+                        if(recording == TRUE){
+                            recorder.stop(); //stop recording
+                            recorder.reset();
+                            Log.e("state","recording has been stopped4");
+                            frameLayout.setVisibility(View.VISIBLE);
+                            showCamera.startShowing();
+                            recording = Boolean.FALSE; //Change Text of Button
+                            buttonHandler();
+                            msg("Recording stopped");
+                        }
+
+                    }
+                }else{
+                    msg("Please set points");
                 }
+
             }
         });
 
@@ -386,8 +436,6 @@ public class Timelapse extends AppCompatActivity {
         //SeekBar and text
         textMovingTime = (TextView) findViewById(R.id.txtMovingSpeed);
         textSpeedRatio = (TextView) findViewById(R.id.txtSpeedRatio);
-        SeekBar sBMovingTime = findViewById(R.id.sBMovingTime);
-        SeekBar sBSpeedRatio = findViewById(R.id.sBSpeedRatio);
         sBMovingTime.setOnSeekBarChangeListener(seekBarTimeChangeListener);
         sBSpeedRatio.setOnSeekBarChangeListener(seekBarRatioChangeListener);
         setMovingTime(3);
@@ -402,7 +450,7 @@ public class Timelapse extends AppCompatActivity {
                     captureRate = 3;
                     Log.e("Switch","Timelapse on");
                 }else{
-                    captureRate = 25;
+                    captureRate = 30;
                     Log.e("Switch","Timelapse off");
                 }
             }
@@ -474,7 +522,7 @@ public class Timelapse extends AppCompatActivity {
         });
 
         //progress bar
-        myProgressBar = (ProgressBar)findViewById(R.id.progressBarTimer);
+        myProgressBar = (ProgressBar) findViewById(R.id.progressBarTimer);
         myProgressBar.setProgress(0);
         myProgressBar.setVisibility(View.GONE);
         myProgressCountdown = new CountDownTimer(movingTime * 1000,1000) {
@@ -520,7 +568,7 @@ public class Timelapse extends AppCompatActivity {
 
         if (recording = Boolean.TRUE) {//stop recording if recording
 
-            recording = Boolean.FALSE; //Change Text of Button
+            recording = FALSE; //Change Text of Button
             buttonHandler();
             recorder.reset();
         }
@@ -652,7 +700,7 @@ public class Timelapse extends AppCompatActivity {
 
     public void buttonHandler() {//handler start Timelapse button
         //Button timelapse = (Button) findViewById(R.id.timelapse);
-        if (recording == Boolean.FALSE) {
+        if (recording == FALSE) {
             //btn_timelapse.setText("Timelapse Starten");
             btnTimeLapse.setBackgroundResource(R.drawable.icon_camera_white);
         } else {
@@ -665,7 +713,7 @@ public class Timelapse extends AppCompatActivity {
 
     public void startTimelapse() throws IOException {
         //
-        if (recording == Boolean.FALSE) { //not recording yet but starting
+        if (recording == FALSE) { //not recording yet but starting
             showCamera.stopShowing();   //Turn Off Camera Preview
             frameLayout.setVisibility(View.INVISIBLE); //Set Framelayout invisble, to show recording of timelapse
             Log.e("state","trying started1");
@@ -722,7 +770,7 @@ public class Timelapse extends AppCompatActivity {
             frameLayout.setVisibility(View.VISIBLE);
             showCamera.startShowing();
 
-            recording = Boolean.FALSE; //Change Text of Button
+            recording = FALSE; //Change Text of Button
             buttonHandler();
         }
     }
@@ -882,16 +930,13 @@ public class Timelapse extends AppCompatActivity {
 
 
     public void sendPosition(){
-        int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0, xSpeed = 9999, ySpeed = 3000, xfactor = 2;
+        int xSteps = 0, ySteps = 0, xJoy = 0, yJoy = 0, xSpeed = 3000, ySpeed = 3000;
         String xDir = "0", yDir = "0";
         xJoy = joystickPan.getNormalizedX();
         yJoy = joystickPan.getNormalizedY();
-
         if(xJoy < 50){
             xSteps = 50 - xJoy;
-
             //left
-
             xDir = "0";
         }
         if(yJoy < 50){
@@ -908,7 +953,6 @@ public class Timelapse extends AppCompatActivity {
             yDir = "1";
         }
 
-        xSteps = Math.round(xSteps / xfactor);
         String msgXY =  String.format("%s%05d%04d%s%05d%04d4",xDir,xSteps,xSpeed,yDir,ySteps,ySpeed);
         Log.e("Output string", msgXY);
         BluetoothSendString(msgXY);
@@ -934,7 +978,7 @@ public class Timelapse extends AppCompatActivity {
     public void moveToPoint(Point p, int time,String msg) throws InterruptedException {
         int delta_x, delta_y, y_ratio = 111, xSteps, ySteps, xOutPutSteps, yOutPutSteps; //34 and 111 steps per degree
         String xDir, yDir;
-        float x_ratio = (float) 33.77*9;
+        float x_ratio = (float) 33.77;
         int xSpeed, ySpeed;
         int current_x_angle = Math.round(orientations[0]); //current orientations
         int current_y_angle = Math.round(orientations[1]);
@@ -964,26 +1008,15 @@ public class Timelapse extends AppCompatActivity {
         //calculate Speeds in step/s at a given time in seconds
         if (time == 0){
             //as fast as possible
-            xSpeed = 5000;
-            ySpeed = 3000;
+            xSpeed = 1000;
+            ySpeed = 1000;
         }else{
             //speed according to range of steps and available time
             xSpeed = Math.round(xSteps/time);
             ySpeed = Math.round(ySteps/time);
-            //xSpeed = 50;
-            //ySpeed = 50;
 
         }
 
-        if (msg =="5"){
-            //errorcheck
-            //use last calculated speed
-            xSpeed = xspeedlast;
-            ySpeed = yspeedlast;
-        }
-
-        xspeedlast = xSpeed;
-        yspeedlast = ySpeed;
         yOutPutSteps = ySteps;
         xOutPutSteps = xSteps;
         String msgXY =  String.format("%s%05d%04d%s%05d%04d%s",xDir,xOutPutSteps,xSpeed,yDir,yOutPutSteps,ySpeed,msg);
@@ -1122,21 +1155,21 @@ public class Timelapse extends AppCompatActivity {
             case 3: {
                 //error check Point B
 
-                moveToPoint(pointB, ab_time, "5");
-                automaticStep = 5;
+                moveToPoint(pointB, ab_time, "2");
+                automaticStep = 4;
                 break;
             }
             case 4: {
                 //error check Point B
 
-                moveToPoint(pointB, ab_time,"5");
+                moveToPoint(pointB, ab_time,"2");
                 automaticStep = 5;
                 break;
             }
             case 5: {
                 //error check Point B
 
-                //moveToPoint(pointB, ab_time,"5");
+                moveToPoint(pointB, ab_time,"2");
                 if (ABCSet){
                     //move to point C
                     automaticStep = 6;
@@ -1156,7 +1189,7 @@ public class Timelapse extends AppCompatActivity {
             case 7: {
                 //error check Point  C
 
-                moveToPoint(pointC, 0,"5");
+                moveToPoint(pointC, 0,"2");
                 automaticStep = 9;
                 break;
             }
@@ -1181,6 +1214,15 @@ public class Timelapse extends AppCompatActivity {
 
                 //reset handleAutomatic
                 automaticStep = 0;
+
+                btnA.setEnabled(TRUE);
+                btnB.setEnabled(TRUE);
+                btnC.setEnabled(TRUE);
+                btnMotion.setEnabled(TRUE);
+                switchCapture.setEnabled(TRUE);
+                joystickPan.setEnabled(TRUE);
+                sBMovingTime.setEnabled(TRUE);
+                sBSpeedRatio.setEnabled(TRUE);
 
                 //reset all points
                 resetPoints();
