@@ -28,7 +28,8 @@ int startMillisBlue = 0;
 int incomingByte = 0;
 String oldString = "";
 String msg = "";
-bool PositionReached = false;
+bool PositionReached = true;
+bool blocklocaljoy = false;
 
 void setup()
 {  
@@ -37,8 +38,8 @@ void setup()
     pan.setMaxSpeed(20000.0);
     pan.setAcceleration(5000.0);
     
-    tilt.setMaxSpeed(1000.0);
-    tilt.setAcceleration(3000.0);
+    tilt.setMaxSpeed(20000.0);
+    tilt.setAcceleration(5000.0);
 }
 
 int processAnalog(int analogDiff){
@@ -46,21 +47,23 @@ int processAnalog(int analogDiff){
   if((analogDiff < 600)and(analogDiff > 500)){
     diff = 0;
   }
-  if(analogDiff < 450){
-    if(analogDiff < 100){
+  if(analogDiff < 470){
+    if(analogDiff < 80){
       diff = -1 * (450 -analogDiff);
+      diff = diff * 2;
     }else{
       diff = -1 * (450 -analogDiff);
-      diff = round(diff/5);
+      diff = round(diff/2);
     }
     
   }
-  if(analogDiff > 650){
-    if(analogDiff > 950){
+  if(analogDiff > 630){
+    if(analogDiff > 980){
       diff = analogDiff - 500;
+      diff = diff * 2;
     }else{
       diff = analogDiff - 500;
-      diff = round(diff/5);
+      diff = round(diff/2);
     }
   }
   return diff;
@@ -88,11 +91,11 @@ void loop()
                 dir_tilt = oldString.substring(10,11).toInt();
                 pan_speed = oldString.substring(6,10).toInt();
                 tilt_speed = oldString.substring(16,20).toInt();
-                
-                if (dir_pan == 0){
+               
+                if (dir_pan == 1){//direction inverse because of added pan gear
                     pan_diff = oldString.substring(1,6).toInt();
                 }else{
-                    if(dir_pan == 1){
+                    if(dir_pan == 0){
                         pan_diff = -1 * oldString.substring(1,6).toInt();
                     }else{
                       oldString = "";
@@ -100,12 +103,12 @@ void loop()
                       tilt_diff = 0;
                     }
                 }
-
+                //pan_diff = pan_diff * 9; //new gear ratio
                 
-                if (dir_tilt == 0){
+                if (dir_tilt == 1){ 
                     tilt_diff = oldString.substring(11,16).toInt();
                 }else{
-                    if(dir_tilt == 1){
+                    if(dir_tilt == 0){
                       tilt_diff = -1 * oldString.substring(11,16).toInt();
                     }else{
                       oldString = "";
@@ -114,7 +117,15 @@ void loop()
                     }
                     
                 }
-
+                if (pan_diff == 0){
+                   pan.setCurrentPosition(0);
+                   setpointX = 0;
+                }
+                if (tilt_diff == 0){
+                   tilt.setCurrentPosition(0);
+                   setpointY = 0;
+                }
+                
                 setpointX = setpointX + pan_diff;
                 setpointY = setpointY + tilt_diff;
                 pan.setMaxSpeed(pan_speed);
@@ -125,30 +136,46 @@ void loop()
                 Serial.println("x moved to " + String(pan_diff) + " with speed: " + String(pan_speed)+ " y moved to " + String(tilt_diff)+" with speed: " + String(tilt_speed));
                 msg = oldString.substring(20,21);
                 Serial.println("message: " + msg);
-                PositionReached = false;  
+                Serial.println(String(setpointX));
+                if ((msg == "1")||(msg == "2")||(msg == "5")){
+                  PositionReached = false; 
+                }else{
+                  blocklocaljoy = true;
+                }
+                 
           }
          }
          
         
         int currentMillis = millis();
-        if (currentMillis - startMillis >= 50){
+        if ((currentMillis - startMillis >= 50)&&(blocklocaljoy == false)&&(PositionReached == true)){
           pan_diff = processAnalog(analogRead(inputy));
           tilt_diff = processAnalog(analogRead(inputx));
+          pan.setMaxSpeed(20000.0);
+          tilt.setMaxSpeed(20000.0);
+          
           setpointX = setpointX + pan_diff;
           setpointY = setpointY + tilt_diff;
           
           if (pan_diff == 0){
-            pan.disableOutputs();
+            pan.setCurrentPosition(0);
+            setpointX = 0;
           }else{
             pan.enableOutputs();
             pan.moveTo(setpointX);  
           }
           if (tilt_diff == 0){
-            tilt.disableOutputs();
+            //tilt.disableOutputs();
+            tilt.setCurrentPosition(0);
+            setpointY = 0;
           }else{
              tilt.enableOutputs();
              tilt.moveTo(setpointY);
           }
+//          Serial.println("X");
+//          Serial.println(setpointX);
+//          Serial.println("Y");
+//          Serial.println(setpointY);
           startMillis = currentMillis;
        }
 
@@ -162,8 +189,20 @@ void loop()
             B.write("einsN");
             Serial.println("first done");
           }
+           if (msg == "5"){
+            B.write("errorcheckN");
+            Serial.println("errorcheck done");
+          }
+          blocklocaljoy = false;
           PositionReached = true;
-       }    
+          pan.setCurrentPosition(0);//sets current position to zero
+          setpointX = 0;
+          
+          tilt.setCurrentPosition(0);//sets current position to zero
+          setpointY = 0;
+       
+       }  
+         
     pan.run();
     tilt.run();
     

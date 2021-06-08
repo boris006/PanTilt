@@ -749,7 +749,8 @@ public class Timelapse extends AppCompatActivity {
             }
 
             recorder.setOutputFile(fileName);
-            recorder.setCaptureRate(captureRate);
+            recorder.setCaptureRate(3);
+            //recorder.setCaptureRate(captureRate);
             Log.e("state","before trying to record");
             try {
                 recorder.prepare();
@@ -976,9 +977,13 @@ public class Timelapse extends AppCompatActivity {
     }
 
     public void moveToPoint(Point p, int time,String msg) throws InterruptedException {
-        int delta_x, delta_y, y_ratio = 111, xSteps, ySteps, xOutPutSteps, yOutPutSteps; //34 and 111 steps per degree
+        int delta_x, delta_y, xSteps, ySteps, xOutPutSteps, yOutPutSteps; //34 and 111 steps per degree
         String xDir, yDir;
-        float x_ratio = (float) 33.77;
+        //float x_ratio = (float) 33.77;
+        float x_ratio = (float) 385;
+        //int y_ratio = 111;
+        int y_ratio = 210;
+
         int xSpeed, ySpeed;
         int current_x_angle = Math.round(orientations[0]); //current orientations
         int current_y_angle = Math.round(orientations[1]);
@@ -1008,8 +1013,8 @@ public class Timelapse extends AppCompatActivity {
         //calculate Speeds in step/s at a given time in seconds
         if (time == 0){
             //as fast as possible
-            xSpeed = 1000;
-            ySpeed = 1000;
+            xSpeed = 5000;
+            ySpeed = 500;
         }else{
             //speed according to range of steps and available time
             xSpeed = Math.round(xSteps/time);
@@ -1148,7 +1153,7 @@ public class Timelapse extends AppCompatActivity {
 
                 //move to b, speed
                 moveToPoint(pointB, ab_time, "2");
-                automaticStep = 3;
+                automaticStep = 5;
                 break;
             }
 
@@ -1163,47 +1168,23 @@ public class Timelapse extends AppCompatActivity {
                 //error check Point B
 
                 moveToPoint(pointB, ab_time,"2");
-                automaticStep = 5;
-                break;
-            }
-            case 5: {
-                //error check Point B
-
-                moveToPoint(pointB, ab_time,"2");
                 if (ABCSet){
                     //move to point C
-                    automaticStep = 6;
+                    automaticStep = 5;
                 }else{
                     //stop recording
-                    automaticStep = 9;
+                    automaticStep = 6;
                 }
                 break;
             }
-            case 6: {
+            case 5: {
                 //move to point C
 
                 moveToPoint(pointC, bc_time,"2");
-                automaticStep = 7;
+                automaticStep = 6;
                 break;
             }
-            case 7: {
-                //error check Point  C
-
-                moveToPoint(pointC, 0,"2");
-                automaticStep = 9;
-                break;
-            }
-
-//            case 8: {
-//                //error check Point  C
-//
-//                moveToPoint(pointC, bc_time, "3");
-//                automaticStep = 9;
-//                break;
-//            }
-
-
-            case 9: {
+            case 6: {
 
                 //stop recording
                 startTimelapse();
