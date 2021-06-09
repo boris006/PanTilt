@@ -1,7 +1,7 @@
 # PanTilt-Halterung
 Android Applikation für das Modul Embedded Systems im Bachelorstudiengang Elektrotechnik und Informationstechnik an der HTWK Leipzig .
 Gruppenarbeit von:
-Maurice Götze 
+Maurice Götze 70421
 
 
 Paul Kretzschmar 
